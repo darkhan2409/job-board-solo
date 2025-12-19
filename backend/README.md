@@ -39,7 +39,17 @@ cp .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-### 5. Access API documentation
+### 5. Seed the database (optional)
+
+```bash
+python seed_data.py
+```
+
+This will populate the database with:
+- 8 tech companies
+- 22 job postings across different locations and levels
+
+### 6. Access API documentation
 
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
