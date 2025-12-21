@@ -1,6 +1,6 @@
 # Job Board Frontend
 
-Next.js 14 frontend for job board application with TypeScript, Tailwind CSS, and shadcn/ui.
+Next.js 12 frontend for job board application with TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Tech Stack
 
