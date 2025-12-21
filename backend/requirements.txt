@@ -1,20 +1,21 @@
 # Backend Dependencies - Job Board Solo Project
 
 # FastAPI Framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+fastapi==0.115.5
+uvicorn[standard]==0.34.0
 
 # Database
-sqlalchemy==2.0.23
-aiosqlite==0.19.0
-alembic==1.12.1
+sqlalchemy==2.0.36
+aiosqlite==0.20.0
+alembic==1.14.0
+greenlet==3.1.1
 
-# Pydantic
-pydantic==2.5.0
-pydantic-settings==2.1.0
+# Pydantic (updated for Python 3.13 support)
+pydantic==2.10.3
+pydantic-settings==2.7.0
 
 # Environment
-python-dotenv==1.0.0
+python-dotenv==1.0.1
 
 # CORS
-python-multipart==0.0.6
+python-multipart==0.0.20

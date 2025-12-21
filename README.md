@@ -364,4 +364,4 @@ MIT License - см. [LICENSE](LICENSE)
 
 ---
 
-Сделано с ❤️ и AI в 2024
+Сделано с ❤️ и AI в 2025

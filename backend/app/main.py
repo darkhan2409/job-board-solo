@@ -24,16 +24,16 @@ async def lifespan(app: FastAPI):
         - Close database connections
     """
     # Startup
-    print("🚀 Starting Job Board API...")
+    print(">> Starting Job Board API...")
     await init_db()
-    print("✅ Database initialized")
+    print(">> Database initialized")
     
     yield
     
     # Shutdown
-    print("🛑 Shutting down Job Board API...")
+    print(">> Shutting down Job Board API...")
     await close_db()
-    print("✅ Database connections closed")
+    print(">> Database connections closed")
 
 
 # Create FastAPI application

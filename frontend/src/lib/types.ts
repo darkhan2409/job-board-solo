@@ -1,11 +1,6 @@
 // TypeScript types matching backend schemas
 
-export enum JobLevel {
-  JUNIOR = "junior",
-  MIDDLE = "middle",
-  SENIOR = "senior",
-  LEAD = "lead"
-}
+export type JobLevel = "junior" | "middle" | "senior" | "lead"
 
 export interface Company {
   id: number
@@ -13,6 +8,7 @@ export interface Company {
   description?: string
   logo?: string
   website?: string
+  job_count?: number
 }
 
 export interface Job {
@@ -24,7 +20,7 @@ export interface Job {
   level: JobLevel
   company_id: number
   created_at: string
-  company: Company
+  company?: Company
 }
 
 export interface JobFilters {
