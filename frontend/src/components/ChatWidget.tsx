@@ -146,6 +146,7 @@ export default function ChatWidget() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
+                data-testid="close-chat"
               >
                 <X className="w-4 h-4" />
               </Button>

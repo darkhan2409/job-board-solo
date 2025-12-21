@@ -19,7 +19,7 @@ export default async function CompaniesPage() {
             <Link
               key={company.id}
               href={`/companies/${company.id}`}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
+              className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
             >
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 {company.name}

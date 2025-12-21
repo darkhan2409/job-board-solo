@@ -45,7 +45,7 @@ test.describe('Chat Widget', () => {
     await page.getByTestId('chat-button').click()
     
     // Click close button
-    await page.getByRole('button', { name: '' }).first().click()
+    await page.getByTestId('close-chat').click()
     
     // Chat widget should be hidden
     const chatWidget = page.getByTestId('chat-widget')

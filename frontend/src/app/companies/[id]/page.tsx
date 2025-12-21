@@ -60,7 +60,7 @@ export default async function CompanyDetailPage({ params }: CompanyDetailPagePro
                     <Link
                       key={job.id}
                       href={`/jobs/${job.id}`}
-                      className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
+                      className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
                     >
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-xl font-semibold text-gray-900">

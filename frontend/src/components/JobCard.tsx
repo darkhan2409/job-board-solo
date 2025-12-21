@@ -14,6 +14,7 @@ export default function JobCard({ job }: JobCardProps) {
     <Link
       href={`/jobs/${job.id}`}
       className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200"
+      data-testid="job-card"
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">

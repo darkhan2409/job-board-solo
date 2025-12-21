@@ -47,9 +47,12 @@ test.describe('Jobs List Page', () => {
   test('should filter by location', async ({ page }) => {
     await page.goto('/jobs')
     
-    // Select location
+    // Type in location filter
     const locationFilter = page.getByTestId('location-filter')
-    await locationFilter.selectOption('Remote')
+    await locationFilter.fill('Remote')
+    
+    // Wait for debounce and URL update
+    await page.waitForTimeout(600)
     
     // Check URL contains location param
     await expect(page).toHaveURL(/location=Remote/)
@@ -58,9 +61,12 @@ test.describe('Jobs List Page', () => {
   test('should filter by level', async ({ page }) => {
     await page.goto('/jobs')
     
-    // Check senior level
-    const seniorCheckbox = page.getByTestId('level-senior')
-    await seniorCheckbox.check()
+    // Click senior level button
+    const seniorButton = page.getByTestId('level-senior')
+    await seniorButton.click()
+    
+    // Wait for debounce and URL update
+    await page.waitForTimeout(600)
     
     // Check URL contains level param
     await expect(page).toHaveURL(/level=senior/)

@@ -57,7 +57,7 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
             <Building2 className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold mb-2">Top Companies</h3>
+          <h3 className="text-lg font-semibold mb-2">Leading Companies</h3>
           <p className="text-muted-foreground">
             Explore opportunities at innovative tech companies
           </p>

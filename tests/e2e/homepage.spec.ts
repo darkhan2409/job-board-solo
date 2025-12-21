@@ -16,9 +16,9 @@ test.describe('Homepage', () => {
     await page.goto('/')
     
     // Check feature cards
-    await expect(page.getByText('Latest Opportunities')).toBeVisible()
-    await expect(page.getByText('Smart Filtering')).toBeVisible()
-    await expect(page.getByText('Top Companies')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Latest Opportunities' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Smart Filtering' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Leading Companies' })).toBeVisible()
   })
 
   test('should navigate to jobs page', async ({ page }) => {

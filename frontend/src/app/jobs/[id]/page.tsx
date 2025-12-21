@@ -75,7 +75,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               size="lg"
               data-testid="apply-button"
             >
-              Apply Now
+              Apply for this position
             </Button>
           </div>
 

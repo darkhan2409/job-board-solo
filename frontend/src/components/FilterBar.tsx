@@ -56,6 +56,7 @@ export default function FilterBar() {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 className="text-lg font-semibold mb-4">Filters</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label htmlFor="search-input" className="block text-sm font-medium text-gray-700 mb-2">
@@ -78,7 +79,7 @@ export default function FilterBar() {
           </label>
           <Input
             id="location-input"
-            data-testid="location-input"
+            data-testid="location-filter"
             type="text"
             placeholder="City or Remote..."
             value={location}
@@ -117,7 +118,7 @@ export default function FilterBar() {
           variant="outline"
           className="w-full md:w-auto"
         >
-          Clear Filters
+          Clear all filters
         </Button>
       )}
     </div>
