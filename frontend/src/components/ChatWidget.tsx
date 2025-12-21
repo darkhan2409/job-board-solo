@@ -10,10 +10,6 @@ import { Card } from '@/components/ui/card'
 interface Message {
   role: 'user' | 'assistant'
   content: string
-  tool_calls?: Array<{
-    name: string
-    arguments: any
-  }>
 }
 
 export default function ChatWidget() {
@@ -22,27 +18,27 @@ export default function ChatWidget() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
-  
+
   useEffect(() => {
     scrollToBottom()
   }, [messages])
-  
-  const sendMessage = async () => {
+
+  const handleSend = async () => {
     if (!input.trim() || isLoading) return
-    
+
     const userMessage: Message = {
       role: 'user',
       content: input,
     }
-    
+
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
-    
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -50,44 +46,81 @@ export default function ChatWidget() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: [...messages, userMessage],
         }),
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response')
       }
-      
-      const data = await response.json()
-      
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: data.message,
-        tool_calls: data.tool_calls,
+
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+      let assistantMessage = ''
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          const chunk = decoder.decode(value)
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6))
+                
+                if (data.type === 'content') {
+                  assistantMessage += data.content
+                  setMessages(prev => {
+                    const newMessages = [...prev]
+                    const lastMessage = newMessages[newMessages.length - 1]
+                    
+                    if (lastMessage?.role === 'assistant') {
+                      lastMessage.content = assistantMessage
+                    } else {
+                      newMessages.push({
+                        role: 'assistant',
+                        content: assistantMessage,
+                      })
+                    }
+                    
+                    return newMessages
+                  })
+                }
+                
+                if (data.type === 'done') {
+                  break
+                }
+              } catch (e) {
+                // Ignore parse errors
+              }
+            }
+          }
+        }
       }
-      
-      setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
       console.error('Chat error:', error)
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-      }])
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Sorry, I encountered an error. Please try again.',
+        },
+      ])
     } finally {
       setIsLoading(false)
     }
   }
-  
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      sendMessage()
+      handleSend()
     }
   }
-  
+
   return (
     <>
       {/* Floating Action Button */}
@@ -99,7 +132,7 @@ export default function ChatWidget() {
       >
         <MessageCircle className="w-6 h-6" />
       </Button>
-      
+
       {/* Chat Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent 
@@ -121,28 +154,26 @@ export default function ChatWidget() {
               Ask me about jobs, companies, or technologies!
             </p>
           </DialogHeader>
-          
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.length === 0 && (
               <div className="text-center text-muted-foreground py-8">
                 <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="text-sm">
-                  Hi! I'm your career assistant. I can help you:
+                <p>Start a conversation!</p>
+                <p className="text-sm mt-2">
+                  Try: "Find me remote React jobs" or "What is Next.js?"
                 </p>
-                <ul className="text-sm mt-2 space-y-1">
-                  <li>• Find relevant job opportunities</li>
-                  <li>• Learn about companies</li>
-                  <li>• Explain technologies in job descriptions</li>
-                  <li>• Validate job pages</li>
-                </ul>
               </div>
             )}
-            
+
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+                data-testid={message.role === 'user' ? 'user-message' : 'ai-message'}
               >
                 <Card
                   className={`max-w-[80%] p-3 ${
@@ -150,38 +181,26 @@ export default function ChatWidget() {
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted'
                   }`}
-                  data-testid={message.role === 'user' ? 'user-message' : 'ai-message'}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  
-                  {message.tool_calls && message.tool_calls.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-border/50">
-                      <p className="text-xs opacity-75">
-                        Used tools: {message.tool_calls.map(tc => tc.name).join(', ')}
-                      </p>
-                    </div>
-                  )}
                 </Card>
               </div>
             ))}
-            
+
             {isLoading && (
-              <div className="flex justify-start">
+              <div className="flex justify-start" data-testid="typing-indicator">
                 <Card className="bg-muted p-3">
-                  <div 
-                    className="flex items-center gap-2 text-sm"
-                    data-testid="typing-indicator"
-                  >
+                  <div className="flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Thinking...</span>
+                    <span className="text-sm">Thinking...</span>
                   </div>
                 </Card>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
-          
+
           {/* Input */}
           <div className="p-4 border-t">
             <div className="flex gap-2">
@@ -189,12 +208,12 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me anything..."
+                placeholder="Type your message..."
                 disabled={isLoading}
                 data-testid="chat-input"
               />
               <Button
-                onClick={sendMessage}
+                onClick={handleSend}
                 disabled={!input.trim() || isLoading}
                 size="icon"
                 data-testid="send-button"
