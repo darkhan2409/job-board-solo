@@ -81,7 +81,7 @@ test.describe('Chat Widget', () => {
 
   // Note: Testing actual AI responses requires OpenAI API key
   // and is better suited for integration tests
-  test.skip('should send message and receive response', async ({ page }) => {
+  test('should send message and receive response', async ({ page }) => {
     await page.goto('/')
     await page.getByTestId('chat-button').click()
     
