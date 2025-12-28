@@ -1,17 +1,20 @@
 # app/routes/jobs.py
 """
-Job API endpoints.
+Job API endpoints with RBAC protection.
 """
 
-from typing import List, Optional
-from fastapi import APIRouter, Depends, Query, status
+from typing import Annotated, List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.services.job_service import JobService
 from app.schemas.job import JobCreate, JobUpdate, JobResponse
+from app.schemas.user import UserResponse
 from app.models.job import JobLevel
+from app.models.user import UserRole
 from app.utils.exceptions import NotFoundException
+from app.utils.dependencies import get_current_active_user, require_role
 
 router = APIRouter()
 
@@ -75,18 +78,20 @@ async def get_job(
 @router.post("/jobs", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_job(
     job_data: JobCreate,
-    db: AsyncSession = Depends(get_db)
+    current_user: Annotated[UserResponse, Depends(require_role([UserRole.EMPLOYER, UserRole.ADMIN]))],
+    db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """
-    Create a new job.
-    
+    Create a new job (requires EMPLOYER or ADMIN role).
+
     Args:
         job_data: Job creation data
-        
+        current_user: Authenticated user (EMPLOYER or ADMIN)
+
     Returns:
         Created job with company details
     """
-    job = await JobService.create(db, job_data)
+    job = await JobService.create(db, job_data, created_by_id=current_user.id)
     return job
 
 
@@ -94,41 +99,69 @@ async def create_job(
 async def update_job(
     job_id: int,
     job_data: JobUpdate,
-    db: AsyncSession = Depends(get_db)
+    current_user: Annotated[UserResponse, Depends(get_current_active_user)],
+    db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """
-    Update an existing job.
-    
+    Update an existing job (requires ownership or ADMIN role).
+
     Args:
         job_id: Job ID to update
         job_data: Job update data (partial updates supported)
-        
+        current_user: Authenticated user
+
     Returns:
         Updated job with company details
-        
+
     Raises:
         NotFoundException: If job not found
+        HTTPException: If user doesn't have permission
     """
-    job = await JobService.update(db, job_id, job_data)
-    if not job:
+    # Get existing job
+    existing_job = await JobService.get_by_id(db, job_id)
+    if not existing_job:
         raise NotFoundException("Job", job_id)
+
+    # Check ownership (allow creator or admin to update)
+    if current_user.role != UserRole.ADMIN and existing_job.created_by_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to update this job"
+        )
+
+    job = await JobService.update(db, job_id, job_data)
     return job
 
 
 @router.delete("/jobs/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_job(
     job_id: int,
-    db: AsyncSession = Depends(get_db)
+    current_user: Annotated[UserResponse, Depends(get_current_active_user)],
+    db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """
-    Delete a job.
-    
+    Delete a job (requires ownership or ADMIN role).
+
     Args:
         job_id: Job ID to delete
-        
+        current_user: Authenticated user
+
     Raises:
         NotFoundException: If job not found
+        HTTPException: If user doesn't have permission
     """
+    # Get existing job
+    existing_job = await JobService.get_by_id(db, job_id)
+    if not existing_job:
+        raise NotFoundException("Job", job_id)
+
+    # Check ownership (allow creator or admin to delete)
+    if current_user.role != UserRole.ADMIN and existing_job.created_by_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to delete this job"
+        )
+
     deleted = await JobService.delete(db, job_id)
     if not deleted:
         raise NotFoundException("Job", job_id)

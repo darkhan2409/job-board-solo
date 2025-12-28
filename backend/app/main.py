@@ -92,7 +92,16 @@ async def root():
 
 
 # Include API routers
-from app.routes import jobs_router, companies_router
+from app.routes import (
+    jobs_router,
+    companies_router,
+    auth_router,
+    saved_jobs_router,
+    applications_router
+)
 
+app.include_router(auth_router, prefix=settings.API_V1_PREFIX, tags=["Authentication"])
 app.include_router(jobs_router, prefix=settings.API_V1_PREFIX, tags=["Jobs"])
 app.include_router(companies_router, prefix=settings.API_V1_PREFIX, tags=["Companies"])
+app.include_router(saved_jobs_router, prefix=settings.API_V1_PREFIX, tags=["Saved Jobs"])
+app.include_router(applications_router, prefix=settings.API_V1_PREFIX, tags=["Applications"])

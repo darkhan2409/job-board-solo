@@ -22,10 +22,10 @@ async def seed_database():
         existing_companies = result.scalars().all()
         
         if existing_companies:
-            print("⚠️  Database already contains data. Skipping seed.")
+            print("WARNING: Database already contains data. Skipping seed.")
             return
-        
-        print("🌱 Seeding database...")
+
+        print("Seeding database...")
         
         # Companies data
         companies_data = [
@@ -87,7 +87,7 @@ async def seed_database():
             companies.append(company)
         
         await db.flush()
-        print(f"✅ Created {len(companies)} companies")
+        print(f"Created {len(companies)} companies")
         
         # Jobs data
         jobs_data = [
@@ -276,13 +276,13 @@ async def seed_database():
             db.add(job)
         
         await db.commit()
-        print(f"✅ Created {len(jobs_data)} jobs")
-        print("🎉 Database seeding completed!")
+        print(f"Created {len(jobs_data)} jobs")
+        print("Database seeding completed!")
 
 
 async def main():
     """Main entry point."""
-    print("🚀 Initializing database...")
+    print("Initializing database...")
     await init_db()
     await seed_database()
 

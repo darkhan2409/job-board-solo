@@ -34,3 +34,63 @@ export interface JobFilters {
 export interface CompanyWithJobs extends Company {
   jobs: Job[]
 }
+
+// Authentication types
+export enum UserRole {
+  REGULAR_USER = "REGULAR_USER",
+  EMPLOYER = "EMPLOYER",
+  ADMIN = "ADMIN",
+}
+
+export interface User {
+  id: number
+  email: string
+  full_name: string
+  role: UserRole
+  is_active: boolean
+  is_verified: boolean
+  oauth_provider?: string | null
+  created_at: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
+  remember_me?: boolean
+}
+
+export interface RegisterRequest {
+  email: string
+  password: string
+  full_name: string
+  role?: UserRole
+}
+
+export interface TokenResponse {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  user: User
+}
+
+export interface AuthState {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
+}
+
+export interface OAuthUrlResponse {
+  authorization_url: string
+  state: string
+}
+
+// Password reset types
+export interface PasswordResetRequest {
+  email: string
+}
+
+export interface PasswordReset {
+  token: string
+  new_password: string
+}

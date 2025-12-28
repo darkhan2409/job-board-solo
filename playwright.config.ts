@@ -45,7 +45,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: 'cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000',
+      command: 'cd backend && venv\\Scripts\\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000',
       url: 'http://localhost:8000/health',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,

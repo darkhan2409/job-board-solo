@@ -6,7 +6,7 @@ Represents job postings with company relationships.
 
 import enum
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import String, Text, Integer, ForeignKey, Enum, DateTime, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -54,13 +54,20 @@ class Job(Base):
         index=True
     )
     
-    # Foreign Key
+    # Foreign Keys
     company_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("companies.id", ondelete="CASCADE"),
         nullable=False
     )
-    
+
+    created_by_id: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,  # Nullable for backward compatibility with existing jobs
+        index=True
+    )
+
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
@@ -68,13 +75,31 @@ class Job(Base):
         nullable=False,
         index=True
     )
-    
+
     # Relationships
     company: Mapped["Company"] = relationship(
         "Company",
         back_populates="jobs"
     )
-    
+
+    created_by: Mapped[Optional["User"]] = relationship(
+        "User",
+        back_populates="jobs_created",
+        foreign_keys=[created_by_id]
+    )
+
+    saved_by_users: Mapped[List["SavedJob"]] = relationship(
+        "SavedJob",
+        back_populates="job",
+        cascade="all, delete-orphan"
+    )
+
+    applications: Mapped[List["Application"]] = relationship(
+        "Application",
+        back_populates="job",
+        cascade="all, delete-orphan"
+    )
+
     # Composite indexes for common query patterns
     __table_args__ = (
         Index("ix_jobs_location_level", "location", "level"),

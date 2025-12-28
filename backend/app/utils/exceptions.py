@@ -24,9 +24,22 @@ class ValidationException(HTTPException):
     Exception raised when business validation fails.
     Returns 400 status code.
     """
-    
+
     def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail
+        )
+
+
+class ConflictException(HTTPException):
+    """
+    Exception raised when a resource conflict occurs (e.g. duplicate entry).
+    Returns 409 status code.
+    """
+
+    def __init__(self, detail: str):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
             detail=detail
         )

@@ -1,6 +1,19 @@
 // API client for backend communication
 
-import { Job, JobFilters, Company, CompanyWithJobs } from './types'
+import {
+  Job,
+  JobFilters,
+  Company,
+  CompanyWithJobs,
+  LoginRequest,
+  RegisterRequest,
+  TokenResponse,
+  User,
+  OAuthUrlResponse,
+  PasswordResetRequest,
+  PasswordReset
+} from './types'
+import { getAuthHeaders, getRefreshToken } from './auth'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -57,13 +70,150 @@ export async function fetchCompanyById(id: number): Promise<CompanyWithJobs> {
   const res = await fetch(`${API_URL}/api/companies/${id}`, {
     cache: 'no-store',
   })
-  
+
   if (!res.ok) {
     if (res.status === 404) {
       throw new Error('Company not found')
     }
     throw new Error(`Failed to fetch company: ${res.status}`)
   }
-  
+
+  return res.json()
+}
+
+// Authentication API
+
+export async function loginUser(data: LoginRequest): Promise<TokenResponse> {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: 'Login failed' }))
+    throw new Error(error.detail || 'Login failed')
+  }
+
+  return res.json()
+}
+
+export async function registerUser(data: RegisterRequest): Promise<User> {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: 'Registration failed' }))
+    throw new Error(error.detail || 'Registration failed')
+  }
+
+  return res.json()
+}
+
+export async function logoutUser(refreshToken: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/auth/logout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  })
+
+  if (!res.ok) {
+    throw new Error('Logout failed')
+  }
+}
+
+export async function refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
+  const res = await fetch(`${API_URL}/api/auth/refresh`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  })
+
+  if (!res.ok) {
+    throw new Error('Token refresh failed')
+  }
+
+  return res.json()
+}
+
+// OAuth API
+
+export async function getOAuthUrl(provider: 'google' | 'github'): Promise<OAuthUrlResponse> {
+  const res = await fetch(`${API_URL}/api/auth/${provider}`, {
+    method: 'GET',
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to get ${provider} OAuth URL`)
+  }
+
+  return res.json()
+}
+
+export async function handleOAuthCallback(
+  provider: 'google' | 'github',
+  code: string,
+  state: string
+): Promise<TokenResponse> {
+  const res = await fetch(`${API_URL}/api/auth/${provider}/callback`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code, state }),
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: 'OAuth callback failed' }))
+    throw new Error(error.detail || 'OAuth callback failed')
+  }
+
+  return res.json()
+}
+
+// Password Reset API
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/auth/request-password-reset`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  })
+
+  // Backend always returns 204 for security (don't reveal if email exists)
+  if (!res.ok && res.status !== 204) {
+    const error = await res.json().catch(() => ({ detail: 'Failed to request password reset' }))
+    throw new Error(error.detail || 'Failed to request password reset')
+  }
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<User> {
+  const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token, new_password: newPassword }),
+  })
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: 'Failed to reset password' }))
+    throw new Error(error.detail || 'Failed to reset password')
+  }
+
   return res.json()
 }

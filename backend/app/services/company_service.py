@@ -50,18 +50,27 @@ class CompanyService:
         return result.scalar_one_or_none()
     
     @staticmethod
-    async def create(db: AsyncSession, company_data: CompanyCreate) -> Company:
+    async def create(
+        db: AsyncSession,
+        company_data: CompanyCreate,
+        managed_by_id: Optional[int] = None
+    ) -> Company:
         """
         Create a new company.
-        
+
         Args:
             db: Database session
             company_data: Company creation data
-            
+            managed_by_id: ID of user managing the company (optional)
+
         Returns:
             Created company
         """
-        company = Company(**company_data.model_dump())
+        company_dict = company_data.model_dump()
+        if managed_by_id is not None:
+            company_dict["managed_by_id"] = managed_by_id
+
+        company = Company(**company_dict)
         db.add(company)
         await db.flush()
         await db.refresh(company)

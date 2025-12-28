@@ -1,6 +1,6 @@
 # 🚀 Job Board Solo - Full-Stack приложение с AI
 
-> Full-stack job board с AI агентом, интеграцией MCP серверов и E2E тестами
+> Full-stack job board с AI агентом и E2E тестами
 
 [![GitHub](https://img.shields.io/badge/GitHub-darkhan2409-blue)](https://github.com/darkhan2409/job-board-solo)
 [![Python](https://img.shields.io/badge/Python-3.11+-green)](https://www.python.org/)
@@ -14,7 +14,6 @@ Job Board Solo - это современное приложение для по�
 
 - ✅ **Full-stack разработку** (FastAPI + Next.js)
 - ✅ **AI интеграцию** (OpenAI GPT-4 Turbo)
-- ✅ **MCP серверы** (Context7 + Playwright)
 - ✅ **E2E тестирование** (Playwright)
 - ✅ **Type-safe код** (TypeScript + Pydantic)
 - ✅ **Современный UI** (Tailwind CSS + shadcn/ui)
@@ -22,11 +21,11 @@ Job Board Solo - это современное приложение для по�
 ## 🎯 Основные возможности
 
 ### Для пользователей
+- 👤 Полная система аутентификации (регистрация, вход, восстановление пароля)
 - 🔍 Поиск вакансий с фильтрами (локация, уровень, ключевые слова)
 - 🏢 Просмотр компаний и их вакансий
+- 🔖 Сохранение избранных вакансий
 - 🤖 AI ассистент для помощи в поиске работы
-- 📚 Объяснение технологий через официальную документацию
-- ✅ Валидация страниц через браузерную автоматизацию
 
 ### Технические
 - 🚀 Server-Side Rendering (Next.js App Router)
@@ -56,11 +55,9 @@ shadcn/ui            - UI components
 Lucide React         - Icons
 ```
 
-### AI & MCP
+### AI
 ```
 OpenAI GPT-4 Turbo   - AI model
-Context7 MCP         - Documentation
-Playwright MCP       - Browser automation
 ```
 
 ### Testing
@@ -234,16 +231,17 @@ npm run test:e2e:report
 1. Кликните на кнопку чата (bottom-right)
 2. Попробуйте команды:
    - "Найди мне удаленные React вакансии"
-   - "Что такое Next.js?"
    - "Расскажи о компании TechCorp"
-   - "Проверь страницу вакансии 5"
 
 ### API
 
 Backend API доступен на http://localhost:8000/api
 
-**Endpoints:**
+**Основные Endpoints:**
 ```
+POST   /api/auth/register     - Регистрация пользователя
+POST   /api/auth/login        - Вход в систему
+POST   /api/auth/refresh      - Обновление токена доступа
 GET    /api/jobs              - Список вакансий
 GET    /api/jobs/{id}         - Детали вакансии
 POST   /api/jobs              - Создать вакансию
@@ -263,7 +261,7 @@ POST   /api/companies         - Создать компанию
 
 ## 🤖 AI Tools
 
-AI ассистент имеет доступ к 4 инструментам:
+AI ассистент имеет доступ к 2 инструментам:
 
 ### 1. search_jobs
 Поиск вакансий через backend API
@@ -283,26 +281,6 @@ AI ассистент имеет доступ к 4 инструментам:
   company_id: 1
 }
 ```
-
-### 3. validate_job_page (Playwright MCP)
-Валидация страницы вакансии через браузер
-```typescript
-{
-  job_id: 5
-}
-```
-
-### 4. explain_technology (Context7 MCP)
-Объяснение технологий через официальную документацию
-```typescript
-{
-  technology: "Next.js",
-  topic: "routing" // опционально
-}
-```
-
-**Поддерживаемые технологии:**
-React, Next.js, FastAPI, Python, TypeScript, Node.js, Docker, Kubernetes, PostgreSQL, MongoDB, Redis, Tailwind CSS
 
 ## 📊 Структура проекта
 
@@ -324,7 +302,7 @@ job-board-solo/
 │   │   ├── components/    # React компоненты
 │   │   └── lib/           # Утилиты и API client
 │   ├── package.json
-│   └── MCP_INTEGRATION.md # MCP документация
+│   └── README.md          # Frontend документация
 │
 ├── tests/                 # E2E тесты
 │   └── e2e/
@@ -372,23 +350,20 @@ npm run test:e2e:report    # Посмотреть отчет
 ## 📚 Документация
 
 - **[WORKFLOW.md](WORKFLOW.md)** - Полная документация процесса разработки
-- **[MCP_INTEGRATION.md](frontend/MCP_INTEGRATION.md)** - Документация MCP интеграции
 - **[Backend README](backend/README.md)** - Backend инструкции
 - **[Frontend README](frontend/README.md)** - Frontend инструкции
 
 ## 🎯 Roadmap
 
 ### Реализовано ✅
+- [x] User authentication (JWT, Roles, Password Reset)
 - [x] Backend API (FastAPI + SQLAlchemy)
 - [x] Frontend (Next.js + React)
 - [x] AI агент (OpenAI GPT-4)
-- [x] MCP интеграция (Context7 + Playwright)
 - [x] E2E тесты (Playwright)
 - [x] Документация
 
 ### Планы 🚧
-- [ ] User authentication
-- [ ] Real-time MCP integration
 - [ ] Unit тесты для backend
 - [ ] Deployment (Vercel + Railway)
 - [ ] Performance optimization
@@ -418,11 +393,10 @@ MIT License - см. [LICENSE](LICENSE)
 
 - **Kiro AI** - AI ассистент для разработки
 - **OpenAI** - GPT-4 Turbo model
-- **Context7** - MCP сервер для документации
-- **Playwright** - MCP сервер для браузерной автоматизации
 - **FastAPI** - Отличный Python framework
 - **Next.js** - Мощный React framework
 - **shadcn/ui** - Красивые UI компоненты
+- **Playwright** - E2E testing framework
 
 ---
 

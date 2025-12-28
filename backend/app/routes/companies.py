@@ -1,16 +1,19 @@
 # app/routes/companies.py
 """
-Company API endpoints.
+Company API endpoints with RBAC protection.
 """
 
-from typing import List
+from typing import Annotated, List
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.services.company_service import CompanyService
 from app.schemas.company import CompanyCreate, CompanyResponse, CompanyWithJobs
+from app.schemas.user import UserResponse
+from app.models.user import UserRole
 from app.utils.exceptions import NotFoundException
+from app.utils.dependencies import require_role
 
 router = APIRouter()
 
@@ -55,16 +58,18 @@ async def get_company(
 @router.post("/companies", response_model=CompanyResponse, status_code=status.HTTP_201_CREATED)
 async def create_company(
     company_data: CompanyCreate,
-    db: AsyncSession = Depends(get_db)
+    current_user: Annotated[UserResponse, Depends(require_role([UserRole.EMPLOYER, UserRole.ADMIN]))],
+    db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """
-    Create a new company.
-    
+    Create a new company (requires EMPLOYER or ADMIN role).
+
     Args:
         company_data: Company creation data
-        
+        current_user: Authenticated user (EMPLOYER or ADMIN)
+
     Returns:
         Created company
     """
-    company = await CompanyService.create(db, company_data)
+    company = await CompanyService.create(db, company_data, managed_by_id=current_user.id)
     return company

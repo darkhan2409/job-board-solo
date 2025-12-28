@@ -83,18 +83,27 @@ class JobService:
         return result.scalar_one_or_none()
     
     @staticmethod
-    async def create(db: AsyncSession, job_data: JobCreate) -> Job:
+    async def create(
+        db: AsyncSession,
+        job_data: JobCreate,
+        created_by_id: Optional[int] = None
+    ) -> Job:
         """
         Create a new job.
-        
+
         Args:
             db: Database session
             job_data: Job creation data
-            
+            created_by_id: ID of user creating the job (optional)
+
         Returns:
             Created job
         """
-        job = Job(**job_data.model_dump())
+        job_dict = job_data.model_dump()
+        if created_by_id is not None:
+            job_dict["created_by_id"] = created_by_id
+
+        job = Job(**job_dict)
         db.add(job)
         await db.flush()
         await db.refresh(job, ["company"])

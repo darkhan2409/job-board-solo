@@ -5,13 +5,11 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-const SYSTEM_PROMPT = `You are a helpful career assistant for a job board platform. You help users find jobs, learn about companies, and understand technologies.
+const SYSTEM_PROMPT = `You are a helpful career assistant for a job board platform. You help users find jobs and learn about companies.
 
 You have access to the following tools:
 1. search_jobs - Search for jobs with filters (location, level, keywords)
 2. get_company_info - Get detailed information about a company
-3. validate_job_page - Validate that a job page displays correctly (uses Playwright)
-4. explain_technology - Explain a technology using official documentation (uses Context7)
 
 Be friendly, concise, and helpful. When recommending jobs, explain why they might be a good fit.`
 
@@ -59,44 +57,6 @@ const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
           },
         },
         required: ['company_id'],
-      },
-    },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'validate_job_page',
-      description: 'Validate that a job detail page displays correctly using browser automation. Checks if all required elements are present.',
-      parameters: {
-        type: 'object',
-        properties: {
-          job_id: {
-            type: 'number',
-            description: 'The ID of the job to validate',
-          },
-        },
-        required: ['job_id'],
-      },
-    },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'explain_technology',
-      description: 'Explain a technology or framework using official documentation. Useful when user asks "What is X?" or needs to understand a technology mentioned in a job.',
-      parameters: {
-        type: 'object',
-        properties: {
-          technology: {
-            type: 'string',
-            description: 'The technology to explain (e.g., "React", "Next.js", "FastAPI", "Docker")',
-          },
-          topic: {
-            type: 'string',
-            description: 'Optional specific topic to focus on (e.g., "hooks", "routing", "deployment")',
-          },
-        },
-        required: ['technology'],
       },
     },
   },

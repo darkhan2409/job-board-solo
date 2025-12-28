@@ -1,7 +1,5 @@
-import { searchJobs } from './search-jobs'
-import { getCompanyInfo } from './get-company'
-import { validateJobPage } from './validate-job'
-import { explainTechnology } from './explain-tech'
+import { searchJobs } from '@/app/api/tools/search-jobs'
+import { getCompanyInfo } from '@/app/api/tools/get-company'
 
 export async function executeToolCall(toolName: string, args: any) {
   console.log(`Executing tool: ${toolName}`, args)
@@ -13,12 +11,6 @@ export async function executeToolCall(toolName: string, args: any) {
       
       case 'get_company_info':
         return await getCompanyInfo(args)
-      
-      case 'validate_job_page':
-        return await validateJobPage(args)
-      
-      case 'explain_technology':
-        return await explainTechnology(args)
       
       default:
         return {

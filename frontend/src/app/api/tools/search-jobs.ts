@@ -23,7 +23,7 @@ export async function searchJobs(args: SearchJobsArgs) {
     const formattedJobs = jobs.map(job => ({
       id: job.id,
       title: job.title,
-      company: job.company.name,
+      company: job.company?.name || 'Unknown',
       company_id: job.company_id,
       location: job.location,
       level: job.level,
