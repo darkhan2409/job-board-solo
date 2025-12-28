@@ -203,8 +203,9 @@ async def login(
     if not user.is_active:
         raise ValidationException("Account is deactivated")
 
-    if not user.is_verified:
-        raise ValidationException("Email not verified. Please check your inbox.")
+    # TEMPORARY: Skip email verification for development
+    # if not user.is_verified:
+    #     raise ValidationException("Email not verified. Please check your inbox.")
 
     # Generate tokens
     access_token = create_access_token(data={"sub": str(user.id), "role": user.role})
