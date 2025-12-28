@@ -3,13 +3,15 @@ import { fetchJobs } from '@/lib/api'
 import { JobFilters, JobLevel } from '@/lib/types'
 import JobCard from '@/components/JobCard'
 import FilterBar from '@/components/FilterBar'
-import { Briefcase } from 'lucide-react'
+import SortDropdown from '@/components/SortDropdown'
+import { Briefcase, ArrowUpDown } from 'lucide-react'
 
 interface JobsPageProps {
   searchParams: {
     search?: string
     location?: string
     level?: string
+    sort?: string
   }
 }
 
@@ -20,7 +22,19 @@ async function JobsList({ searchParams }: JobsPageProps) {
     level: searchParams.level as JobLevel | undefined,
   }
   
-  const jobs = await fetchJobs(filters)
+  let jobs = await fetchJobs(filters)
+  
+  // Apply sorting
+  const sortBy = searchParams.sort || 'newest'
+  if (sortBy === 'newest') {
+    jobs = jobs.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  } else if (sortBy === 'oldest') {
+    jobs = jobs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+  } else if (sortBy === 'salary-high') {
+    jobs = jobs.sort((a, b) => (b.salary || 0) - (a.salary || 0))
+  } else if (sortBy === 'salary-low') {
+    jobs = jobs.sort((a, b) => (a.salary || 0) - (b.salary || 0))
+  }
   
   if (jobs.length === 0) {
     return (
@@ -92,6 +106,7 @@ export default function JobsPage({ searchParams }: JobsPageProps) {
               <Suspense fallback={<p className="text-muted-foreground">Loading jobs...</p>}>
                 <JobsCount searchParams={searchParams} />
               </Suspense>
+              <SortDropdown />
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">

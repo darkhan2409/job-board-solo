@@ -1,7 +1,21 @@
 import Link from 'next/link'
-import { Briefcase, Building2, Search, TrendingUp, Users, Award } from 'lucide-react'
+import { Briefcase, Building2, Search, TrendingUp, Users, Award, ArrowRight, Code, Palette, Database, Smartphone, Globe, Cpu } from 'lucide-react'
+import { fetchJobs } from '@/lib/api'
+import JobCard from '@/components/JobCard'
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch featured jobs (latest 6)
+  const featuredJobs = await fetchJobs({ limit: 6 })
+  
+  const categories = [
+    { name: 'Frontend Development', icon: Code, count: 45, color: 'bg-blue-100 text-blue-700' },
+    { name: 'UI/UX Design', icon: Palette, count: 32, color: 'bg-purple-100 text-purple-700' },
+    { name: 'Backend Development', icon: Database, count: 38, color: 'bg-green-100 text-green-700' },
+    { name: 'Mobile Development', icon: Smartphone, count: 28, color: 'bg-orange-100 text-orange-700' },
+    { name: 'Full Stack', icon: Globe, count: 52, color: 'bg-cyan-100 text-cyan-700' },
+    { name: 'DevOps', icon: Cpu, count: 24, color: 'bg-red-100 text-red-700' },
+  ]
+
   return (
     <div className="min-h-screen">
       {/* Hero Section - Corporate Professional */}
@@ -143,6 +157,85 @@ export default function HomePage() {
                 Browse Jobs
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Jobs Section */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-4xl font-bold mb-2">Featured Jobs</h2>
+              <p className="text-lg text-muted-foreground">
+                Hand-picked opportunities from top companies
+              </p>
+            </div>
+            <Link 
+              href="/jobs"
+              className="hidden md:inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+            >
+              View all jobs
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {featuredJobs.slice(0, 6).map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+
+          <div className="text-center md:hidden">
+            <Link 
+              href="/jobs"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+            >
+              View all jobs
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Categories Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Popular Categories</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore jobs by category and find your perfect match
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category) => {
+              const Icon = category.icon
+              return (
+                <Link
+                  key={category.name}
+                  href={`/jobs?search=${encodeURIComponent(category.name)}`}
+                  className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 card-hover"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div className="px-3 py-1 bg-gray-100 rounded-full">
+                      <span className="text-sm font-semibold text-gray-700">
+                        {category.count} jobs
+                      </span>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Explore opportunities in {category.name.toLowerCase()}
+                  </p>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
