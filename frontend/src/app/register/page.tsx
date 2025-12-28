@@ -12,20 +12,20 @@ import { UserPlus } from 'lucide-react'
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-lg">
-            <UserPlus className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-secondary/10 border border-secondary/20 rounded-2xl mb-4">
+            <UserPlus className="w-8 h-8 text-secondary" />
           </div>
-          <h1 className="text-3xl font-bold text-gradient mb-2">Join JobBoard</h1>
-          <p className="text-muted-foreground">Start your journey to your dream career</p>
+          <h1 className="text-3xl font-bold text-white mb-2 font-heading">Join CareerOS</h1>
+          <p className="text-gray-400 font-mono text-sm">$ create --new-account</p>
         </div>
         
-        <Card className="shadow-xl border-0">
+        <Card className="card-dark border border-border/50">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl">Create Your Account</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl text-white font-heading">Create Your Account</CardTitle>
+            <CardDescription className="text-gray-400">
               Sign up to access thousands of job opportunities
             </CardDescription>
           </CardHeader>
@@ -34,7 +34,7 @@ export default function RegisterPage() {
 
             <OAuthButtons />
 
-            <div className="mt-6 text-center text-sm text-gray-600 pt-4 border-t">
+            <div className="mt-6 text-center text-sm text-gray-500 pt-4 border-t border-border/50">
               Already have an account?{' '}
               <Link
                 href="/login"
