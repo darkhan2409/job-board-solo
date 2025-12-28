@@ -43,20 +43,20 @@ export default function SortDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-card border border-muted rounded-xl hover:border-primary transition-colors font-medium text-sm"
       >
         <ArrowUpDown className="w-4 h-4 text-primary" />
         {currentLabel}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-10">
+        <div className="absolute right-0 mt-2 w-56 bg-card rounded-xl shadow-xl border border-muted py-2 z-10">
           {sortOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => handleSort(option.value)}
-              className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center justify-between ${
-                currentSort === option.value ? 'text-primary font-semibold' : 'text-gray-700'
+              className={`w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between ${
+                currentSort === option.value ? 'text-primary font-semibold' : 'text-foreground'
               }`}
             >
               {option.label}

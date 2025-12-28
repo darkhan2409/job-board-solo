@@ -63,13 +63,13 @@ function JobsLoading() {
       {[1, 2, 3, 4, 5, 6].map((i) => (
         <div 
           key={i} 
-          className="bg-white border rounded-xl p-6 animate-pulse shadow-sm"
+          className="bg-card border border-muted rounded-2xl p-6 animate-pulse"
         >
-          <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+          <div className="h-6 bg-muted rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
           <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-4 bg-muted rounded w-1/3"></div>
+            <div className="h-4 bg-muted rounded w-1/4"></div>
           </div>
         </div>
       ))}
@@ -81,13 +81,13 @@ export default function JobsPage({ searchParams }: JobsPageProps) {
   const hasFilters = searchParams.search || searchParams.location || searchParams.level
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Find Your Next Job</h1>
+          <h1 className="text-4xl font-bold mb-2">Browse Roles</h1>
           <p className="text-lg text-muted-foreground">
-            Browse through our latest job opportunities from top companies
+            Structured opportunities from verified companies
           </p>
         </div>
         
@@ -95,7 +95,7 @@ export default function JobsPage({ searchParams }: JobsPageProps) {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar - Filters */}
           <aside className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border p-6 sticky top-24">
+            <div className="bg-card border border-muted rounded-2xl p-6 sticky top-24">
               <FilterBar />
             </div>
           </aside>
@@ -103,7 +103,7 @@ export default function JobsPage({ searchParams }: JobsPageProps) {
           {/* Jobs Grid */}
           <div className="lg:col-span-3">
             <div className="mb-6 flex items-center justify-between">
-              <Suspense fallback={<p className="text-muted-foreground">Loading jobs...</p>}>
+              <Suspense fallback={<p className="text-muted-foreground">Loading...</p>}>
                 <JobsCount searchParams={searchParams} />
               </Suspense>
               <SortDropdown />
@@ -133,8 +133,8 @@ async function JobsCount({ searchParams }: JobsPageProps) {
   return (
     <div className="flex items-center gap-2">
       <div className="w-2 h-2 bg-primary rounded-full"></div>
-      <p className="text-sm font-semibold text-gray-700">
-        {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} found
+      <p className="text-sm font-semibold text-muted-foreground mono">
+        {jobs.length} {jobs.length === 1 ? 'role' : 'roles'}
       </p>
     </div>
   )

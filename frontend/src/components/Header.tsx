@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
-import { LogOut, Briefcase, Building2 } from 'lucide-react'
+import { LogOut, Briefcase, Building2, Terminal } from 'lucide-react'
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth()
@@ -17,25 +17,30 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b bg-white shadow-sm sticky top-0 z-50">
+    <header className="border-b border-muted bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-            <Briefcase className="w-7 h-7 text-primary" />
-            JobBoard
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <Terminal className="w-5 h-5 text-primary" />
+            </div>
+            <span className="text-xl font-bold">
+              <span className="text-gradient">Career</span>
+              <span className="text-muted-foreground">OS</span>
+            </span>
           </Link>
 
           <div className="flex items-center gap-8">
             <Link 
               href="/jobs" 
-              className="font-medium hover:text-primary transition-colors flex items-center gap-2"
+              className="font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
             >
               <Briefcase className="w-4 h-4" />
-              Jobs
+              Roles
             </Link>
             <Link 
               href="/companies" 
-              className="font-medium hover:text-primary transition-colors flex items-center gap-2"
+              className="font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
             >
               <Building2 className="w-4 h-4" />
               Companies
@@ -43,8 +48,8 @@ export default function Header() {
 
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                <div className="px-3 py-1 bg-primary/10 rounded-full">
-                  <span className="text-sm font-medium text-primary">
+                <div className="px-3 py-1.5 bg-card border border-muted rounded-lg">
+                  <span className="text-sm font-medium">
                     {user?.full_name}
                   </span>
                 </div>
@@ -52,7 +57,7 @@ export default function Header() {
                   variant="outline"
                   size="sm"
                   onClick={handleLogout}
-                  className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
+                  className="flex items-center gap-2 border-muted hover:border-destructive hover:text-destructive"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout

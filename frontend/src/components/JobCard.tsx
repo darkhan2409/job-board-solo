@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Job } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { formatSalary } from '@/lib/salary-utils';
-import { MapPin, DollarSign, Calendar, Building2 } from 'lucide-react';
+import { MapPin, DollarSign, Calendar, Building2, ExternalLink } from 'lucide-react';
 
 interface JobCardProps {
   job: Job;
@@ -11,15 +11,15 @@ interface JobCardProps {
 const getLevelColor = (level: string) => {
   switch (level.toLowerCase()) {
     case 'junior':
-      return 'bg-green-100 text-green-700 border-green-200';
+      return 'bg-secondary/10 text-secondary border-secondary/20';
     case 'middle':
-      return 'bg-blue-100 text-blue-700 border-blue-200';
-    case 'senior':
       return 'bg-primary/10 text-primary border-primary/20';
-    case 'lead':
+    case 'senior':
       return 'bg-accent/10 text-accent border-accent/20';
+    case 'lead':
+      return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
     default:
-      return 'bg-gray-100 text-gray-700 border-gray-200';
+      return 'bg-muted text-muted-foreground border-muted';
   }
 };
 
@@ -29,43 +29,54 @@ export default function JobCard({ job }: JobCardProps) {
   return (
     <Link
       href={`/jobs/${job.id}`}
-      className="block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 card-hover group"
+      className="block bg-card border border-muted rounded-2xl p-6 card-hover group"
       data-testid="job-card"
     >
-      <div className="flex justify-between items-start mb-4">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
             {job.title}
           </h3>
-          <div className="flex items-center gap-2 text-gray-600 font-medium">
-            <Building2 className="w-4 h-4 text-primary" />
-            {job.company?.name || 'Company'}
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Building2 className="w-4 h-4" />
+            <span className="font-medium">{job.company?.name || 'Company'}</span>
           </div>
         </div>
-        <Badge className={`ml-4 border font-semibold ${getLevelColor(job.level)}`}>
+        <Badge className={`ml-4 border font-semibold uppercase text-xs tracking-wide ${getLevelColor(job.level)}`}>
           {job.level}
         </Badge>
       </div>
 
-      <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+      {/* Description */}
+      <p className="text-muted-foreground mb-4 line-clamp-2 leading-relaxed text-sm">
         {job.description}
       </p>
 
-      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 pt-4 border-t">
-        <span className="flex items-center gap-1.5">
-          <MapPin className="w-4 h-4 text-secondary" />
-          {job.location}
-        </span>
+      {/* Footer - Salary is the main anchor */}
+      <div className="flex items-center justify-between pt-4 border-t border-muted">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4" />
+            {job.location}
+          </span>
+          <span className="flex items-center gap-1.5 text-muted-foreground/60">
+            <Calendar className="w-4 h-4" />
+            {new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          </span>
+        </div>
         {formattedSalary && (
-          <span className="flex items-center gap-1.5 font-semibold text-accent">
+          <div className="flex items-center gap-1.5 font-bold text-primary mono">
             <DollarSign className="w-4 h-4" />
             {formattedSalary}
-          </span>
+          </div>
         )}
-        <span className="flex items-center gap-1.5 text-gray-400 ml-auto">
-          <Calendar className="w-4 h-4" />
-          {new Date(job.created_at).toLocaleDateString()}
-        </span>
+      </div>
+
+      {/* Hover indicator */}
+      <div className="mt-4 flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-sm font-semibold">View details</span>
+        <ExternalLink className="w-4 h-4" />
       </div>
     </Link>
   );

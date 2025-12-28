@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { JobLevel } from '@/lib/types';
-import { Search, MapPin, Briefcase, X } from 'lucide-react';
+import { Search, MapPin, Sliders, X } from 'lucide-react';
 
 export default function FilterBar() {
   const router = useRouter();
@@ -21,10 +21,10 @@ export default function FilterBar() {
   const levels: JobLevel[] = ['junior', 'middle', 'senior', 'lead'];
 
   const levelColors = {
-    junior: 'bg-green-100 text-green-700 border-green-200 hover:bg-green-200',
-    middle: 'bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200',
-    senior: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20',
-    lead: 'bg-accent/10 text-accent border-accent/20 hover:bg-accent/20',
+    junior: 'bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20',
+    middle: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20',
+    senior: 'bg-accent/10 text-accent border-accent/20 hover:bg-accent/20',
+    lead: 'bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20',
   };
 
   useEffect(() => {
@@ -65,16 +65,16 @@ export default function FilterBar() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-primary" />
+        <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
+          <Sliders className="w-4 h-4" />
           Filters
         </h2>
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+            className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1 uppercase tracking-wide"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3 h-3" />
             Clear
           </button>
         )}
@@ -82,25 +82,25 @@ export default function FilterBar() {
 
       {/* Search */}
       <div>
-        <label htmlFor="search-input" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-          <Search className="w-4 h-4 text-primary" />
+        <label htmlFor="search-input" className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide flex items-center gap-2">
+          <Search className="w-3 h-3" />
           Search
         </label>
         <Input
           id="search-input"
           data-testid="search-input"
           type="text"
-          placeholder="Job title or keyword..."
+          placeholder="Role, tech stack..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full"
+          className="w-full bg-card border-muted"
         />
       </div>
       
       {/* Location */}
       <div>
-        <label htmlFor="location-input" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-secondary" />
+        <label htmlFor="location-input" className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide flex items-center gap-2">
+          <MapPin className="w-3 h-3" />
           Location
         </label>
         <Input
@@ -110,13 +110,13 @@ export default function FilterBar() {
           placeholder="City or Remote..."
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="w-full"
+          className="w-full bg-card border-muted"
         />
       </div>
 
-      {/* Level */}
+      {/* Level - Toggle style */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
           Experience Level
         </label>
         <div className="flex flex-col gap-2">
@@ -125,13 +125,13 @@ export default function FilterBar() {
               key={level}
               data-testid={`level-${level}`}
               onClick={() => toggleLevel(level)}
-              className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all border ${
+              className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border uppercase tracking-wide ${
                 selectedLevels.includes(level)
                   ? levelColors[level]
-                  : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                  : 'bg-card text-muted-foreground border-muted hover:border-primary/50'
               }`}
             >
-              {level.charAt(0).toUpperCase() + level.slice(1)}
+              {level}
             </button>
           ))}
         </div>
@@ -142,7 +142,7 @@ export default function FilterBar() {
           data-testid="clear-filters"
           onClick={clearFilters}
           variant="outline"
-          className="w-full font-semibold"
+          className="w-full font-semibold border-muted hover:border-primary"
         >
           Clear all filters
         </Button>

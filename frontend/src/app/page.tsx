@@ -1,82 +1,83 @@
 import Link from 'next/link'
-import { Briefcase, Building2, Search, TrendingUp, Users, Award, ArrowRight, Code, Palette, Database, Smartphone, Globe, Cpu } from 'lucide-react'
+import { Briefcase, Building2, TrendingUp, Users, Award, ArrowRight, Code, Palette, Database, Smartphone, Globe, Cpu, Terminal, Zap, Shield } from 'lucide-react'
 import { fetchJobs } from '@/lib/api'
 import JobCard from '@/components/JobCard'
+import HeroSearch from '@/components/HeroSearch'
 
 export default async function HomePage() {
   // Fetch featured jobs (latest 6)
   const featuredJobs = await fetchJobs({ limit: 6 })
   
   const categories = [
-    { name: 'Frontend Development', icon: Code, count: 45, color: 'bg-blue-100 text-blue-700' },
-    { name: 'UI/UX Design', icon: Palette, count: 32, color: 'bg-purple-100 text-purple-700' },
-    { name: 'Backend Development', icon: Database, count: 38, color: 'bg-green-100 text-green-700' },
-    { name: 'Mobile Development', icon: Smartphone, count: 28, color: 'bg-orange-100 text-orange-700' },
-    { name: 'Full Stack', icon: Globe, count: 52, color: 'bg-cyan-100 text-cyan-700' },
-    { name: 'DevOps', icon: Cpu, count: 24, color: 'bg-red-100 text-red-700' },
+    { name: 'Frontend', icon: Code, count: 45, color: 'text-primary' },
+    { name: 'UI/UX Design', icon: Palette, count: 32, color: 'text-secondary' },
+    { name: 'Backend', icon: Database, count: 38, color: 'text-primary' },
+    { name: 'Mobile', icon: Smartphone, count: 28, color: 'text-accent' },
+    { name: 'Full Stack', icon: Globe, count: 52, color: 'text-secondary' },
+    { name: 'DevOps', icon: Cpu, count: 24, color: 'text-accent' },
   ]
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Corporate Professional */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/95 to-secondary py-24 px-4">
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
+      {/* Hero Section - Digital Career OS */}
+      <section className="relative overflow-hidden py-24 px-4 noise-texture">
+        <div className="absolute inset-0 grid-pattern opacity-30" />
         <div className="container mx-auto relative z-10">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <div className="inline-block mb-4 px-4 py-2 bg-accent/20 backdrop-blur-sm rounded-full border border-accent/30">
-              <span className="text-accent font-semibold">🚀 #1 Professional Job Board</span>
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-card border border-muted rounded-full mb-6">
+              <Terminal className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-muted-foreground">Digital Career OS</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Elevate Your Career to
-              <span className="block mt-2 text-accent">New Heights</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              Find your next
+              <span className="block mt-2 text-gradient">IT role</span>
             </h1>
-            <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Connect with leading companies and discover opportunities that match your expertise. 
-              Join thousands of professionals advancing their careers.
+            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+              Not another job board. A developer-oriented platform for structured career opportunities.
             </p>
+            
+            {/* Command Bar Style Search */}
+            <HeroSearch />
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
                 href="/jobs"
-                className="inline-flex items-center justify-center gap-2 bg-accent text-white px-8 py-4 rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/20 hover:shadow-primary/30"
               >
-                <Search className="w-5 h-5" />
-                Explore Opportunities
+                <Briefcase className="w-5 h-5" />
+                Browse Roles
               </Link>
               <Link 
                 href="/companies"
-                className="inline-flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg"
+                className="inline-flex items-center justify-center gap-2 bg-card border-2 border-muted text-foreground px-8 py-4 rounded-xl font-semibold hover:border-primary transition-all duration-200"
               >
                 <Building2 className="w-5 h-5" />
-                View Companies
+                Companies
               </Link>
             </div>
           </div>
         </div>
-        
-        {/* Decorative Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-muted/30 border-y">
+      <section className="py-12 border-y border-muted">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-primary mb-2">500+</div>
-              <div className="text-muted-foreground font-medium">Active Jobs</div>
+              <div className="text-4xl font-bold text-primary mb-2 mono">500+</div>
+              <div className="text-muted-foreground text-sm uppercase tracking-wide">Active Roles</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-primary mb-2">200+</div>
-              <div className="text-muted-foreground font-medium">Companies</div>
+              <div className="text-4xl font-bold text-secondary mb-2 mono">200+</div>
+              <div className="text-muted-foreground text-sm uppercase tracking-wide">Companies</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-primary mb-2">10K+</div>
-              <div className="text-muted-foreground font-medium">Professionals</div>
+              <div className="text-4xl font-bold text-primary mb-2 mono">10K+</div>
+              <div className="text-muted-foreground text-sm uppercase tracking-wide">Developers</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-primary mb-2">95%</div>
-              <div className="text-muted-foreground font-medium">Success Rate</div>
+              <div className="text-4xl font-bold text-accent mb-2 mono">95%</div>
+              <div className="text-muted-foreground text-sm uppercase tracking-wide">Match Rate</div>
             </div>
           </div>
         </div>
@@ -87,95 +88,62 @@ export default async function HomePage() {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              Why Choose <span className="text-gradient">JobBoard</span>
+              Built for <span className="text-gradient">Developers</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              The professional platform trusted by industry leaders
+              A product-driven approach to career opportunities
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-card border rounded-xl p-8 card-hover">
-              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                <TrendingUp className="w-7 h-7 text-primary" />
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-card border border-muted rounded-2xl p-8 card-hover">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                <Terminal className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Career Growth</h3>
+              <h3 className="text-2xl font-bold mb-3">Structured Data</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Access exclusive opportunities from Fortune 500 companies and innovative startups. 
-                Advance your career with positions that match your ambitions.
+                Roles presented as structured data. Filter by tech stack, salary range, and experience level with precision.
               </p>
             </div>
             
-            <div className="bg-card border rounded-xl p-8 card-hover">
-              <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
-                <Users className="w-7 h-7 text-secondary" />
+            <div className="bg-card border border-muted rounded-2xl p-8 card-hover">
+              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
+                <Zap className="w-6 h-6 text-secondary" />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Expert Network</h3>
+              <h3 className="text-2xl font-bold mb-3">Live Filtering</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Join a community of top-tier professionals. Connect with industry leaders 
-                and expand your professional network.
+                Real-time search and filtering. No page reloads, no waiting. Control panel-style interface for developers.
               </p>
             </div>
             
-            <div className="bg-card border rounded-xl p-8 card-hover">
-              <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mb-6">
-                <Award className="w-7 h-7 text-accent" />
+            <div className="bg-card border border-muted rounded-2xl p-8 card-hover">
+              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6 text-accent" />
               </div>
-              <h3 className="text-2xl font-bold mb-3">Premium Support</h3>
+              <h3 className="text-2xl font-bold mb-3">Verified Roles</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Get personalized career guidance and AI-powered job matching. 
-                Our platform ensures you find the perfect fit.
+                Every role is verified. Salary ranges are real. No spam, no fake listings. Quality over quantity.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-primary to-secondary">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center text-white">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Ready to Take the Next Step?
-            </h2>
-            <p className="text-xl text-blue-100 mb-10 leading-relaxed">
-              Join thousands of professionals who have found their dream careers through our platform. 
-              Your next opportunity awaits.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent text-white px-8 py-4 rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105"
-              >
-                Get Started Free
-              </Link>
-              <Link 
-                href="/jobs"
-                className="inline-flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg"
-              >
-                <Briefcase className="w-5 h-5" />
-                Browse Jobs
-              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Jobs Section */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-card/30">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h2 className="text-4xl font-bold mb-2">Featured Jobs</h2>
+              <h2 className="text-4xl font-bold mb-2">Latest Roles</h2>
               <p className="text-lg text-muted-foreground">
-                Hand-picked opportunities from top companies
+                Recently posted opportunities
               </p>
             </div>
             <Link 
               href="/jobs"
               className="hidden md:inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
             >
-              View all jobs
+              View all
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -191,7 +159,7 @@ export default async function HomePage() {
               href="/jobs"
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
             >
-              View all jobs
+              View all roles
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -202,9 +170,9 @@ export default async function HomePage() {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Popular Categories</h2>
+            <h2 className="text-4xl font-bold mb-4">Browse by Category</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore jobs by category and find your perfect match
+              Explore roles organized by tech domain
             </p>
           </div>
 
@@ -215,23 +183,23 @@ export default async function HomePage() {
                 <Link
                   key={category.name}
                   href={`/jobs?search=${encodeURIComponent(category.name)}`}
-                  className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 card-hover"
+                  className="group bg-card border border-muted rounded-2xl p-6 card-hover"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center`}>
+                    <div className={`w-12 h-12 bg-muted rounded-xl flex items-center justify-center ${category.color}`}>
                       <Icon className="w-6 h-6" />
                     </div>
-                    <div className="px-3 py-1 bg-gray-100 rounded-full">
-                      <span className="text-sm font-semibold text-gray-700">
-                        {category.count} jobs
+                    <div className="px-3 py-1 bg-muted rounded-full">
+                      <span className="text-sm font-semibold mono text-muted-foreground">
+                        {category.count}
                       </span>
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
                     {category.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    Explore opportunities in {category.name.toLowerCase()}
+                  <p className="text-muted-foreground text-sm">
+                    Explore {category.name.toLowerCase()} opportunities
                   </p>
                 </Link>
               )
