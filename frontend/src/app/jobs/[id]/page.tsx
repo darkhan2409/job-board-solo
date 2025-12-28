@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, DollarSign, Calendar, Building2, ArrowLeft, ExternalLink } from 'lucide-react';
 import { formatSalary } from '@/lib/salary-utils';
+import SaveJobButton from '@/components/SaveJobButton';
 
 interface JobDetailPageProps {
   params: {
@@ -89,6 +90,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               </div>
             </div>
 
+            <div className="flex flex-wrap gap-4">
             <Button 
               className="w-full sm:w-auto btn-primary px-8 py-4 text-base font-semibold" 
               size="lg"
@@ -96,6 +98,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             >
               Apply for this role
             </Button>
+            <SaveJobButton jobId={job.id} variant="detail" />
+            </div>
           </div>
 
           {/* Job Description */}

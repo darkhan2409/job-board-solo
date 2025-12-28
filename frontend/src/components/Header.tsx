@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
-import { LogOut, Briefcase, Building2, Terminal } from 'lucide-react'
+import { LogOut, Briefcase, Building2, Terminal, Bookmark } from 'lucide-react'
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth()
@@ -45,6 +45,15 @@ export default function Header() {
               <Building2 className="w-4 h-4" />
               Companies
             </Link>
+            {isAuthenticated && (
+              <Link 
+                href="/saved" 
+                className="font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+              >
+                <Bookmark className="w-4 h-4" />
+                Saved
+              </Link>
+            )}
 
             {isAuthenticated ? (
               <div className="flex items-center gap-4">

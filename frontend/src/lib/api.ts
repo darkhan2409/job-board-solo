@@ -11,7 +11,8 @@ import {
   User,
   OAuthUrlResponse,
   PasswordResetRequest,
-  PasswordReset
+  PasswordReset,
+  SavedJob
 } from './types'
 import { getAuthHeaders, getRefreshToken } from './auth'
 
@@ -216,4 +217,65 @@ export async function resetPassword(token: string, newPassword: string): Promise
   }
 
   return res.json()
+}
+
+// Saved Jobs API
+
+export async function getSavedJobs(): Promise<SavedJob[]> {
+  const res = await fetch(`${API_URL}/api/saved-jobs`, {
+    headers: getAuthHeaders(),
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch saved jobs')
+  }
+
+  return res.json()
+}
+
+export async function checkJobSaved(jobId: number): Promise<boolean> {
+  const res = await fetch(`${API_URL}/api/saved-jobs/${jobId}/check`, {
+    headers: getAuthHeaders(),
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    return false
+  }
+
+  const data = await res.json()
+  return data.is_saved
+}
+
+export async function saveJob(jobId: number): Promise<SavedJob> {
+  const res = await fetch(`${API_URL}/api/saved-jobs`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify({ job_id: jobId }),
+  })
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('Unauthorized: Please login to save jobs')
+    }
+    const error = await res.json().catch(() => ({ detail: 'Failed to save job' }))
+    throw new Error(error.detail || 'Failed to save job')
+  }
+
+  return res.json()
+}
+
+export async function unsaveJob(jobId: number): Promise<void> {
+  const res = await fetch(`${API_URL}/api/saved-jobs/${jobId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to unsave job')
+  }
 }

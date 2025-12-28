@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { validateEmail } from '@/lib/validation'
 import { Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -42,9 +43,12 @@ export default function LoginForm() {
 
     try {
       await login({ email, password, remember_me: rememberMe })
+      toast.success('Welcome back!')
       router.push('/jobs')
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'Login failed')
+      const errorMessage = error instanceof Error ? error.message : 'Login failed'
+      setApiError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

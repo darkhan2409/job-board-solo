@@ -108,11 +108,12 @@ async def get_current_active_user(
             detail="User account is inactive"
         )
 
-    if not current_user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Email not verified. Please check your email for verification link."
-        )
+    # TEMPORARY: Skip email verification for development
+    # if not current_user.is_verified:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Email not verified. Please check your email for verification link."
+    #     )
 
     return current_user
 

@@ -5,6 +5,7 @@ import ChatWidget from '@/components/ChatWidget'
 import { AuthProvider } from '@/contexts/AuthContext'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -42,6 +43,19 @@ export default function RootLayout({
 
             <Footer />
           </div>
+
+          {/* Toast Notifications */}
+          <Toaster 
+            position="bottom-right" 
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+              },
+            }}
+          />
 
           {/* AI Chat Widget */}
           <ChatWidget />

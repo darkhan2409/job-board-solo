@@ -11,6 +11,7 @@ import {
   validateFullName,
 } from '@/lib/validation'
 import { Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function RegisterForm() {
   const router = useRouter()
@@ -63,8 +64,11 @@ export default function RegisterForm() {
         full_name: formData.full_name,
       })
       setSuccess(true)
+      toast.success('Account created successfully!')
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'Registration failed')
+      const errorMessage = error instanceof Error ? error.message : 'Registration failed'
+      setApiError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

@@ -3,6 +3,7 @@ import { Job } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { formatSalary } from '@/lib/salary-utils';
 import { MapPin, DollarSign, Calendar, Building2, ExternalLink } from 'lucide-react';
+import SaveJobButton from './SaveJobButton';
 
 interface JobCardProps {
   job: Job;
@@ -43,9 +44,12 @@ export default function JobCard({ job }: JobCardProps) {
             <span className="font-medium">{job.company?.name || 'Company'}</span>
           </div>
         </div>
-        <Badge className={`ml-4 border font-semibold uppercase text-xs tracking-wide ${getLevelColor(job.level)}`}>
-          {job.level}
-        </Badge>
+        <div className="flex items-center gap-2 ml-4">
+          <Badge className={`border font-semibold uppercase text-xs tracking-wide ${getLevelColor(job.level)}`}>
+            {job.level}
+          </Badge>
+          <SaveJobButton jobId={job.id} variant="card" />
+        </div>
       </div>
 
       {/* Description */}

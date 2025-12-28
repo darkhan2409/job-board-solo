@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { JobLevel } from '@/lib/types';
-import { Search, MapPin, Sliders, X } from 'lucide-react';
+import { Search, MapPin, Sliders, X, DollarSign } from 'lucide-react';
 
 export default function FilterBar() {
   const router = useRouter();
@@ -13,6 +13,8 @@ export default function FilterBar() {
   
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [location, setLocation] = useState(searchParams.get('location') || '');
+  const [minSalary, setMinSalary] = useState(searchParams.get('minSalary') || '');
+  const [maxSalary, setMaxSalary] = useState(searchParams.get('maxSalary') || '');
   const [selectedLevels, setSelectedLevels] = useState<JobLevel[]>(() => {
     const levelParam = searchParams.get('level');
     return levelParam ? [levelParam as JobLevel] : [];
@@ -33,7 +35,7 @@ export default function FilterBar() {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [search, location, selectedLevels]);
+  }, [search, location, selectedLevels, minSalary, maxSalary]);
 
   const applyFilters = () => {
     const params = new URLSearchParams();
@@ -41,6 +43,8 @@ export default function FilterBar() {
     if (search) params.set('search', search);
     if (location) params.set('location', location);
     if (selectedLevels.length > 0) params.set('level', selectedLevels[0]);
+    if (minSalary) params.set('minSalary', minSalary);
+    if (maxSalary) params.set('maxSalary', maxSalary);
 
     router.push(`/jobs?${params.toString()}`);
   };
@@ -57,10 +61,12 @@ export default function FilterBar() {
     setSearch('');
     setLocation('');
     setSelectedLevels([]);
+    setMinSalary('');
+    setMaxSalary('');
     router.push('/jobs');
   };
 
-  const hasFilters = search || location || selectedLevels.length > 0;
+  const hasFilters = search || location || selectedLevels.length > 0 || minSalary || maxSalary;
 
   return (
     <div className="space-y-6">
@@ -112,6 +118,30 @@ export default function FilterBar() {
           onChange={(e) => setLocation(e.target.value)}
           className="w-full bg-card border-muted"
         />
+      </div>
+
+      {/* Salary Range */}
+      <div>
+        <label className="block text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide flex items-center gap-2">
+          <DollarSign className="w-3 h-3" />
+          Salary Range (USD)
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            type="number"
+            placeholder="Min"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="w-full bg-card border-muted font-mono text-sm"
+          />
+          <Input
+            type="number"
+            placeholder="Max"
+            value={maxSalary}
+            onChange={(e) => setMaxSalary(e.target.value)}
+            className="w-full bg-card border-muted font-mono text-sm"
+          />
+        </div>
       </div>
 
       {/* Level - Toggle style */}

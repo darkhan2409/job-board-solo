@@ -94,3 +94,11 @@ export interface PasswordReset {
   token: string
   new_password: string
 }
+
+// Saved jobs types
+export interface SavedJob {
+  user_id: number
+  job_id: number
+  saved_at: string
+  job: Job
+}
