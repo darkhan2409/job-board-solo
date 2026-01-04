@@ -203,9 +203,8 @@ async def login(
     if not user.is_active:
         raise ValidationException("Account is deactivated")
 
-    # TEMPORARY: Skip email verification for development
-    # if not user.is_verified:
-    #     raise ValidationException("Email not verified. Please check your inbox.")
+    if not user.is_verified:
+        raise ValidationException("Email not verified. Please check your inbox.")
 
     # Generate tokens
     access_token = create_access_token(data={"sub": str(user.id), "role": user.role})
@@ -455,3 +454,51 @@ async def reset_password(db: AsyncSession, token: str, new_password: str) -> Use
     logger.info(f"Password reset successful for user {user.email}")
 
     return user
+
+
+async def resend_verification_email(db: AsyncSession, email: str) -> None:
+    """
+    Resend verification email to user.
+
+    Args:
+        db: Database session
+        email: User's email address
+
+    Raises:
+        ValidationException: If user not found or already verified
+    """
+    # Find user
+    stmt = select(User).where(User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise ValidationException("User not found")
+
+    if user.is_verified:
+        raise ValidationException("Email already verified")
+
+    # Generate new verification token
+    token = generate_random_token()
+    expires_at = datetime.utcnow() + timedelta(hours=settings.EMAIL_VERIFICATION_EXPIRE_HOURS)
+
+    verification_token = EmailVerificationToken(
+        token=token,
+        user_id=user.id,
+        expires_at=expires_at,
+    )
+
+    db.add(verification_token)
+    await db.commit()
+
+    # Send verification email
+    try:
+        await send_verification_email(
+            email=user.email,
+            full_name=user.full_name,
+            verification_token=token,
+        )
+        logger.info(f"Verification email resent to {email}")
+    except Exception as e:
+        logger.error(f"Failed to resend verification email to {email}: {e}")
+        raise ValidationException("Failed to send verification email")

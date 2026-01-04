@@ -30,7 +30,6 @@ from app.services import auth_service, user_service, oauth_service
 from app.utils.dependencies import get_current_active_user
 from app.utils.exceptions import ValidationException, NotFoundException
 from app.utils.rate_limit import limiter
-from app.utils.security import generate_random_token
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -106,6 +105,37 @@ async def verify_email(
     except NotFoundException as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+
+
+@router.post(
+    "/resend-verification",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Resend verification email",
+    description="Resend verification email to user",
+)
+@limiter.limit("3/hour")
+async def resend_verification(
+    request: Request,
+    email_data: PasswordResetRequest,  # Reusing this schema as it only has email field
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """
+    Resend verification email to user.
+
+    - Generates new verification token
+    - Sends verification email
+    - Rate limited to 3 requests per hour
+    """
+    try:
+        await auth_service.resend_verification_email(
+            db=db,
+            email=email_data.email,
+        )
+    except ValidationException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
 
@@ -286,17 +316,19 @@ async def reset_password(
     summary="Get Google OAuth URL",
     description="Generate Google OAuth authorization URL",
 )
-async def google_auth_url():
+async def google_auth_url(db: Annotated[AsyncSession, Depends(get_db)]):
     """
     Get Google OAuth authorization URL.
 
     - Generates state parameter for CSRF protection
+    - Stores state in database with expiration
     - Returns authorization URL for client redirect
     """
-    state = generate_random_token()
-    # TODO: Store state in Redis/DB with expiration for CSRF validation
-
     try:
+        # Create and store state token
+        state = await oauth_service.create_oauth_state(db=db, provider='google')
+        
+        # Generate OAuth URL with state
         auth_url = oauth_service.get_google_auth_url(state=state)
         return OAuthUrlResponse(authorization_url=auth_url)
     except ValidationException as e:
@@ -319,13 +351,12 @@ async def google_callback(
     """
     Handle Google OAuth callback.
 
+    - Validates state parameter for CSRF protection
     - Exchanges authorization code for access token
     - Gets user info from Google
     - Creates or updates user account
     - Returns JWT tokens
     """
-    # TODO: Validate state parameter for CSRF protection
-
     try:
         access_token, refresh_token, user = await oauth_service.handle_google_callback(
             db=db,
@@ -350,17 +381,19 @@ async def google_callback(
     summary="Get GitHub OAuth URL",
     description="Generate GitHub OAuth authorization URL",
 )
-async def github_auth_url():
+async def github_auth_url(db: Annotated[AsyncSession, Depends(get_db)]):
     """
     Get GitHub OAuth authorization URL.
 
     - Generates state parameter for CSRF protection
+    - Stores state in database with expiration
     - Returns authorization URL for client redirect
     """
-    state = generate_random_token()
-    # TODO: Store state in Redis/DB with expiration for CSRF validation
-
     try:
+        # Create and store state token
+        state = await oauth_service.create_oauth_state(db=db, provider='github')
+        
+        # Generate OAuth URL with state
         auth_url = oauth_service.get_github_auth_url(state=state)
         return OAuthUrlResponse(authorization_url=auth_url)
     except ValidationException as e:
@@ -383,13 +416,12 @@ async def github_callback(
     """
     Handle GitHub OAuth callback.
 
+    - Validates state parameter for CSRF protection
     - Exchanges authorization code for access token
     - Gets user info from GitHub
     - Creates or updates user account
     - Returns JWT tokens
     """
-    # TODO: Validate state parameter for CSRF protection
-
     try:
         access_token, refresh_token, user = await oauth_service.handle_github_callback(
             db=db,

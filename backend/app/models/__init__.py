@@ -11,6 +11,7 @@ from app.models.email_verification_token import EmailVerificationToken
 from app.models.password_reset_token import PasswordResetToken
 from app.models.saved_job import SavedJob
 from app.models.application import Application, ApplicationStatus
+from app.models.oauth_state import OAuthState
 
 __all__ = [
     "Company",
@@ -24,4 +25,5 @@ __all__ = [
     "SavedJob",
     "Application",
     "ApplicationStatus",
+    "OAuthState",
 ]

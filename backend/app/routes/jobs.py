@@ -4,7 +4,7 @@ Job API endpoints with RBAC protection.
 """
 
 from typing import Annotated, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -15,12 +15,16 @@ from app.models.job import JobLevel
 from app.models.user import UserRole
 from app.utils.exceptions import NotFoundException
 from app.utils.dependencies import get_current_active_user, require_role
+from app.utils.rate_limit import limiter
+from app.config import settings
 
 router = APIRouter()
 
 
 @router.get("/jobs", response_model=List[JobResponse])
+# @limiter.limit(settings.SEARCH_RATE_LIMIT)  # Temporarily disabled for debugging
 async def get_jobs(
+    request: Request,
     location: Optional[str] = Query(None, description="Filter by location"),
     level: Optional[JobLevel] = Query(None, description="Filter by seniority level"),
     search: Optional[str] = Query(None, description="Search in title and description"),
@@ -53,7 +57,9 @@ async def get_jobs(
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)
+@limiter.limit(settings.API_RATE_LIMIT)
 async def get_job(
+    request: Request,
     job_id: int,
     db: AsyncSession = Depends(get_db)
 ):
@@ -76,7 +82,9 @@ async def get_job(
 
 
 @router.post("/jobs", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute")  # Stricter limit for job creation
 async def create_job(
+    request: Request,
     job_data: JobCreate,
     current_user: Annotated[UserResponse, Depends(require_role([UserRole.EMPLOYER, UserRole.ADMIN]))],
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -96,7 +104,9 @@ async def create_job(
 
 
 @router.put("/jobs/{job_id}", response_model=JobResponse)
+@limiter.limit("20/minute")  # Moderate limit for updates
 async def update_job(
+    request: Request,
     job_id: int,
     job_data: JobUpdate,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
@@ -134,7 +144,9 @@ async def update_job(
 
 
 @router.delete("/jobs/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("10/minute")  # Stricter limit for deletion
 async def delete_job(
+    request: Request,
     job_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]

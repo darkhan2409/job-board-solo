@@ -72,6 +72,7 @@ class ApiClient {
         method,
         headers: requestHeaders,
         body: body ? JSON.stringify(body) : undefined,
+        credentials: 'include', // Include cookies and auth headers for CORS
         cache: method === 'GET' ? 'no-store' : undefined,
       })
 

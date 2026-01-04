@@ -1,0 +1,16 @@
+{
+  "name": "job-board-backend",
+  "version": "1.0.0",
+  "description": "Job Board API Backend",
+  "scripts": {
+    "dev": "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "start": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "test": "pytest tests/",
+    "test:verbose": "pytest tests/ -v",
+    "test:coverage": "pytest tests/ --cov=app --cov-report=html",
+    "sync": "python sync_hh_vacancies.py"
+  },
+  "keywords": ["fastapi", "job-board", "api"],
+  "author": "",
+  "license": "MIT"
+}

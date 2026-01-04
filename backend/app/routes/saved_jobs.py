@@ -3,7 +3,7 @@
 Saved jobs API endpoints for authenticated users.
 """
 from typing import Annotated, List
-from fastapi import APIRouter, Depends, Query, status, HTTPException
+from fastapi import APIRouter, Depends, Query, Request, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -13,12 +13,16 @@ from app.schemas.user import UserResponse
 from app.models.user import UserRole
 from app.utils.exceptions import NotFoundException, ConflictException
 from app.utils.dependencies import get_current_active_user
+from app.utils.rate_limit import limiter
+from app.config import settings
 
 router = APIRouter()
 
 
 @router.get("/saved-jobs", response_model=List[SavedJobResponse])
+@limiter.limit(settings.API_RATE_LIMIT)
 async def get_saved_jobs(
+    request: Request,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
     skip: int = Query(0, ge=0, description="Number of records to skip"),
@@ -45,7 +49,9 @@ async def get_saved_jobs(
 
 
 @router.get("/saved-jobs/{job_id}/check")
+@limiter.limit(settings.API_RATE_LIMIT)
 async def check_job_saved(
+    request: Request,
     job_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -73,7 +79,9 @@ async def check_job_saved(
     response_model=SavedJobResponse,
     status_code=status.HTTP_201_CREATED
 )
+@limiter.limit("30/minute")  # Moderate limit for saving jobs
 async def save_job(
+    request: Request,
     save_data: SavedJobCreate,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -101,7 +109,9 @@ async def save_job(
 
 
 @router.delete("/saved-jobs/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("30/minute")  # Moderate limit for unsaving jobs
 async def unsave_job(
+    request: Request,
     job_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]

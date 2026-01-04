@@ -3,7 +3,7 @@
 Job application API endpoints.
 """
 from typing import Annotated, List, Optional
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+from fastapi import APIRouter, Depends, Query, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -20,12 +20,16 @@ from app.models.user import UserRole
 from app.models.application import ApplicationStatus
 from app.utils.exceptions import NotFoundException
 from app.utils.dependencies import get_current_active_user
+from app.utils.rate_limit import limiter
+from app.config import settings
 
 router = APIRouter()
 
 
 @router.get("/applications/me", response_model=List[ApplicationResponse])
+@limiter.limit(settings.API_RATE_LIMIT)
 async def get_my_applications(
+    request: Request,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
     status_filter: Optional[ApplicationStatus] = Query(None, alias="status"),
@@ -55,7 +59,9 @@ async def get_my_applications(
 
 
 @router.get("/jobs/{job_id}/applications", response_model=List[ApplicationWithoutJob])
+@limiter.limit(settings.API_RATE_LIMIT)
 async def get_job_applications(
+    request: Request,
     job_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -106,7 +112,9 @@ async def get_job_applications(
 
 
 @router.get("/applications/{application_id}", response_model=ApplicationResponse)
+@limiter.limit(settings.API_RATE_LIMIT)
 async def get_application(
+    request: Request,
     application_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -152,7 +160,9 @@ async def get_application(
     response_model=ApplicationResponse,
     status_code=status.HTTP_201_CREATED
 )
+@limiter.limit("10/minute")  # Stricter limit for application submission
 async def create_application(
+    request: Request,
     application_data: ApplicationCreate,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
@@ -180,7 +190,9 @@ async def create_application(
 
 
 @router.patch("/applications/{application_id}/status", response_model=ApplicationResponse)
+@limiter.limit("30/minute")  # Moderate limit for status updates
 async def update_application_status(
+    request: Request,
     application_id: int,
     status_update: ApplicationUpdate,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
@@ -227,7 +239,9 @@ async def update_application_status(
 
 
 @router.post("/applications/{application_id}/withdraw", response_model=ApplicationResponse)
+@limiter.limit("20/minute")  # Moderate limit for withdrawals
 async def withdraw_application(
+    request: Request,
     application_id: int,
     current_user: Annotated[UserResponse, Depends(get_current_active_user)],
     db: Annotated[AsyncSession, Depends(get_db)]

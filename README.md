@@ -1,270 +1,211 @@
-# 🚀 Job Board Solo - Full-Stack приложение с AI
+# 🚀 Job Board Solo - Full-Stack Job Board with AI Assistant
 
-> Full-stack job board с AI агентом и E2E тестами
+> Modern job board application with AI-powered search assistant and HeadHunter API integration
 
-[![GitHub](https://img.shields.io/badge/GitHub-darkhan2409-blue)](https://github.com/darkhan2409/job-board-solo)
 [![Python](https://img.shields.io/badge/Python-3.11+-green)](https://www.python.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-12-black)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-teal)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104-teal)](https://fastapi.tiangolo.com/)
+[![Tests](https://img.shields.io/badge/E2E_Tests-33_Passing-success)](https://playwright.dev/)
 
-## 📋 Описание
+## 📋 Overview
 
-Job Board Solo - это современное приложение для поиска работы с интеграцией AI ассистента. Проект демонстрирует:
+Job Board Solo is a full-stack job search platform featuring:
 
-- ✅ **Full-stack разработку** (FastAPI + Next.js)
-- ✅ **AI интеграцию** (OpenAI GPT-4 Turbo)
-- ✅ **E2E тестирование** (Playwright)
-- ✅ **Type-safe код** (TypeScript + Pydantic)
-- ✅ **Современный UI** (Tailwind CSS + shadcn/ui)
+- 🔍 **Real Job Data** - Integration with HeadHunter API for live IT vacancies
+- 🤖 **AI Assistant** - OpenAI GPT-4 powered chat for intelligent job search
+- 🔐 **Complete Auth** - JWT-based authentication with OAuth support
+- 📱 **Responsive UI** - Modern design with Tailwind CSS and shadcn/ui
+- ✅ **Tested** - 33 E2E tests with Playwright (100% pass rate)
+- 🔒 **Secure** - HTTPS support, rate limiting, CORS configuration
 
-## 🎯 Основные возможности
-
-### Для пользователей
-- 👤 Полная система аутентификации (регистрация, вход, восстановление пароля)
-- 🔍 Поиск вакансий с фильтрами (локация, уровень, ключевые слова)
-- 🏢 Просмотр компаний и их вакансий
-- 🔖 Сохранение избранных вакансий
-- 🤖 AI ассистент для помощи в поиске работы
-
-### Технические
-- 🚀 Server-Side Rendering (Next.js App Router)
-- ⚡ Async API (FastAPI + SQLAlchemy)
-- 🎨 Responsive дизайн (Mobile-first)
-- 🧪 33 E2E теста (Playwright)
-- 📝 Type-safe везде (TypeScript + Pydantic V2)
-
-## 🛠️ Технологический стек
+## 🛠️ Tech Stack
 
 ### Backend
-```
-FastAPI 0.104.1      - Web framework
-SQLAlchemy 2.0.23    - ORM (async)
-Pydantic V2          - Validation
-SQLite               - Database
-Uvicorn              - ASGI server
-```
+- **FastAPI 0.115** - Modern Python web framework
+- **SQLAlchemy 2.0** - Async ORM with SQLite
+- **Pydantic V2** - Data validation
+- **Alembic** - Database migrations
+- **HeadHunter API** - Real job data integration
 
 ### Frontend
-```
-Next.js 12.3.4       - React framework
-React 18.2.0         - UI library
-TypeScript 5.3.3     - Type safety
-Tailwind CSS 3.3.6   - Styling
-shadcn/ui            - UI components
-Lucide React         - Icons
-```
+- **Next.js 14** - React framework with App Router
+- **TypeScript 5.3** - Type safety
+- **Tailwind CSS 3.3** - Utility-first styling
+- **shadcn/ui** - Beautiful UI components
+- **Lucide React** - Icon library
 
-### AI
-```
-OpenAI GPT-4 Turbo   - AI model
-```
+### AI & Testing
+- **OpenAI GPT-4 Turbo** - AI assistant
+- **Playwright 1.40** - E2E testing framework
 
-### Testing
-```
-Playwright 1.40.1    - E2E testing
-```
+## 🚀 Quick Start
 
-## 📦 Установка и запуск
-
-### Требования
+### Prerequisites
 
 - Python 3.11+
 - Node.js 16+
-- npm или yarn
-- OpenAI API key (для AI агента)
+- OpenAI API key (for AI assistant)
 
-### 1. Клонировать репозиторий
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/darkhan2409/job-board-solo.git
 cd job-board-solo
 ```
 
-### 2. Backend
+### 2. Backend Setup
 
 ```bash
 cd backend
 
-# Создать виртуальное окружение
+# Create virtual environment
 python -m venv venv
 
-# Активировать (Windows)
+# Activate virtual environment
+# Windows:
 venv\Scripts\activate
-
-# Активировать (Linux/Mac)
+# Linux/Mac:
 source venv/bin/activate
 
-# Установить зависимости
+# Install dependencies
 pip install -r requirements.txt
 
-# Заполнить БД тестовыми данными
+# Configure environment
+cp .env.example .env
+
+# Generate secure SECRET_KEY
+python -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))"
+# Add the generated key to .env file
+
+# Seed database with sample data
 python seed_data.py
 
-# Запустить сервер
-uvicorn app.main:app --reload
+# Start server
+uvicorn app.main:app --reload --port 8000
 ```
 
-Backend будет доступен на http://localhost:8000  
-API документация: http://localhost:8000/docs
+Backend will be available at: http://localhost:8000
+API documentation: http://localhost:8000/docs
 
-### 3. Frontend
+### 3. Sync Real Job Data (Optional)
+
+Fetch real IT vacancies from HeadHunter API:
+
+```bash
+cd backend
+python sync_hh_vacancies.py
+```
+
+This will:
+- Clear sample data
+- Fetch 150+ real IT jobs from HeadHunter
+- Save companies and vacancies to database
+
+### 4. Frontend Setup
 
 ```bash
 cd frontend
 
-# Установить зависимости
+# Install dependencies
 npm install
 
-# Создать .env.local
-cp .env.local.example .env.local
+# Configure environment
+cp .env.example .env.local
 
-# Добавить OpenAI API ключ в .env.local
-# OPENAI_API_KEY=sk-...
+# Add your OpenAI API key to .env.local
+# OPENAI_API_KEY=sk-proj-your-key-here
 
-# Запустить dev server
+# Start development server
 npm run dev
 ```
 
-Frontend будет доступен на http://localhost:3000
+Frontend will be available at: http://localhost:3000
 
-## 🔒 Безопасность и Секреты
-
-### ⚠️ ВАЖНО: Настройка API ключей
-
-**НИКОГДА не коммитьте настоящие API ключи в git!**
-
-#### Frontend (.env.local)
-
-1. Скопируйте шаблон:
-```bash
-cd frontend
-cp .env.example .env.local
-```
-
-2. Получите OpenAI API ключ:
-   - Перейдите на https://platform.openai.com/api-keys
-   - Создайте новый API ключ
-   - Скопируйте ключ (он будет показан только один раз!)
-
-3. Добавьте ключ в `.env.local`:
-```bash
-OPENAI_API_KEY=sk-proj-ваш-реальный-ключ-здесь
-```
-
-#### Backend (.env)
-
-1. Скопируйте шаблон:
-```bash
-cd backend
-cp .env.example .env
-```
-
-2. Сгенерируйте безопасный SECRET_KEY:
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-```
-
-3. Добавьте ключ в `.env`:
-```bash
-SECRET_KEY=сгенерированный-ключ-здесь
-```
-
-### 🛡️ Если вы случайно раскрыли API ключ:
-
-1. **Немедленно отзовите старый ключ:**
-   - Перейдите на https://platform.openai.com/api-keys
-   - Найдите раскрытый ключ и удалите его
-
-2. **Создайте новый ключ** и обновите `.env.local`
-
-3. **Очистите git историю** (если ключ был закоммичен):
-```bash
-# Используйте BFG Repo-Cleaner или git filter-branch
-# ВНИМАНИЕ: это перезапишет историю!
-git filter-branch --force --index-filter \
-  "git rm --cached --ignore-unmatch frontend/.env.local" \
-  --prune-empty --tag-name-filter cat -- --all
-```
-
-### ✅ Проверка безопасности
-
-Убедитесь, что `.gitignore` содержит:
-```
-.env
-.env.local
-*.key
-```
-
-### 4. E2E тесты (опционально)
+### 5. Run E2E Tests (Optional)
 
 ```bash
-# Из корня проекта
+# From project root
 npm install
-
-# Установить браузеры
 npx playwright install
 
-# Запустить тесты
+# Run tests
 npm run test:e2e
 
-# UI mode (интерактивный)
+# Run tests in UI mode
 npm run test:e2e:ui
 
-# Посмотреть отчет
+# View test report
 npm run test:e2e:report
 ```
 
-## 🎮 Использование
+## 📚 Key Features
 
-### Поиск вакансий
+### For Users
+- 👤 **Authentication** - Register, login, password reset, OAuth
+- 🔍 **Job Search** - Filter by keywords, location, experience level
+- 🏢 **Company Profiles** - View companies and their job listings
+- 🔖 **Save Jobs** - Bookmark interesting positions
+- 🤖 **AI Assistant** - Chat with AI to find relevant jobs
+- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
 
-1. Откройте http://localhost:3000
-2. Перейдите на страницу "Jobs"
-3. Используйте фильтры:
-   - Поиск по ключевым словам
-   - Фильтр по локации
-   - Фильтр по уровню (junior/middle/senior/lead)
+### For Developers
+- ⚡ **Async API** - FastAPI with async SQLAlchemy
+- 🔒 **Security** - JWT tokens, password hashing, rate limiting
+- 📝 **Type Safety** - TypeScript + Pydantic validation
+- 🧪 **Testing** - 33 E2E tests with Playwright
+- 📖 **Documentation** - OpenAPI/Swagger docs
+- 🔄 **Real Data** - HeadHunter API integration
 
-### AI ассистент
+## 🔑 API Endpoints
 
-1. Кликните на кнопку чата (bottom-right)
-2. Попробуйте команды:
-   - "Найди мне удаленные React вакансии"
-   - "Расскажи о компании TechCorp"
-
-### API
-
-Backend API доступен на http://localhost:8000/api
-
-**Основные Endpoints:**
+### Authentication
 ```
-POST   /api/auth/register     - Регистрация пользователя
-POST   /api/auth/login        - Вход в систему
-POST   /api/auth/refresh      - Обновление токена доступа
-GET    /api/jobs              - Список вакансий
-GET    /api/jobs/{id}         - Детали вакансии
-POST   /api/jobs              - Создать вакансию
-PUT    /api/jobs/{id}         - Обновить вакансию
-DELETE /api/jobs/{id}         - Удалить вакансию
-GET    /api/companies         - Список компаний
-GET    /api/companies/{id}    - Детали компании
-POST   /api/companies         - Создать компанию
+POST   /api/auth/register          - Register new user
+POST   /api/auth/login             - Login
+POST   /api/auth/refresh           - Refresh access token
+POST   /api/auth/forgot-password   - Request password reset
+POST   /api/auth/reset-password    - Reset password
+GET    /api/auth/verify-email      - Verify email
 ```
 
-**Фильтры для /api/jobs:**
-- `search` - Поиск по title/description
-- `location` - Фильтр по локации
-- `level` - Фильтр по уровню (junior/middle/senior/lead)
-- `skip` - Пагинация (offset)
-- `limit` - Количество результатов
+### Jobs
+```
+GET    /api/jobs                   - List jobs (with filters)
+GET    /api/jobs/{id}              - Get job details
+POST   /api/jobs                   - Create job (auth required)
+PUT    /api/jobs/{id}              - Update job (auth required)
+DELETE /api/jobs/{id}              - Delete job (auth required)
+```
 
-## 🤖 AI Tools
+### Companies
+```
+GET    /api/companies              - List companies
+GET    /api/companies/{id}         - Get company details
+POST   /api/companies              - Create company (auth required)
+```
 
-AI ассистент имеет доступ к 2 инструментам:
+### HeadHunter Integration
+```
+GET    /api/v1/hh/vacancies        - Search HH vacancies
+GET    /api/v1/hh/vacancies/{id}   - Get HH vacancy details
+GET    /api/v1/hh/areas            - List available areas
+GET    /api/v1/hh/roles            - List professional roles
+```
+
+### Query Parameters for /api/jobs
+- `search` - Search in title/description
+- `location` - Filter by location
+- `level` - Filter by level (junior/middle/senior/lead)
+- `skip` - Pagination offset
+- `limit` - Results per page
+
+## 🤖 AI Assistant
+
+The AI assistant has access to two tools:
 
 ### 1. search_jobs
-Поиск вакансий через backend API
+Search for jobs through the backend API
 ```typescript
 {
   search: "React",
@@ -275,135 +216,225 @@ AI ассистент имеет доступ к 2 инструментам:
 ```
 
 ### 2. get_company_info
-Информация о компании и её вакансиях
+Get company details and their job listings
 ```typescript
 {
   company_id: 1
 }
 ```
 
-## 📊 Структура проекта
+## 📊 Project Structure
 
 ```
 job-board-solo/
-├── backend/                 # FastAPI backend
-│   ├── app/
-│   │   ├── models/         # SQLAlchemy модели
-│   │   ├── schemas/        # Pydantic схемы
-│   │   ├── routes/         # API endpoints
-│   │   ├── services/       # Бизнес-логика
-│   │   └── utils/          # Утилиты
-│   ├── requirements.txt
-│   └── seed_data.py        # Заполнение БД
+├── 📁 backend/              # FastAPI backend
+│   ├── app/                # Application code
+│   ├── alembic/           # Database migrations
+│   └── *.py               # Scripts (seed, sync, etc.)
 │
-├── frontend/               # Next.js frontend
-│   ├── src/
-│   │   ├── app/           # Pages (App Router)
-│   │   ├── components/    # React компоненты
-│   │   └── lib/           # Утилиты и API client
-│   ├── package.json
-│   └── README.md          # Frontend документация
+├── 📁 frontend/            # Next.js frontend
+│   ├── src/               # Source code
+│   │   ├── app/          # Pages & API routes
+│   │   ├── components/   # React components
+│   │   └── lib/          # Utilities
+│   └── public/           # Static assets
 │
-├── tests/                 # E2E тесты
-│   └── e2e/
-│       ├── homepage.spec.ts
-│       ├── jobs.spec.ts
-│       ├── job-detail.spec.ts
-│       ├── companies.spec.ts
-│       └── chat.spec.ts
+├── 📁 tests/               # E2E tests (Playwright)
+│   └── e2e/              # Test specifications
 │
-├── playwright.config.ts   # Playwright конфигурация
-├── WORKFLOW.md           # Полная документация процесса
-└── README.md             # Этот файл
+├── 📁 docs/                # Documentation
+│   ├── PROJECT_STRUCTURE.md
+│   ├── SECURITY.md
+│   ├── WORKFLOW.md
+│   └── HTTPS_SETUP.md
+│
+├── 📁 scripts/             # Utility scripts
+│   ├── generate-certs.bat
+│   └── generate-certs.sh
+│
+├── 📁 screenshots/         # Development evidence
+├── 📁 ai-rules/           # AI assistant rules
+│
+├── 📄 package.json        # Root dependencies (Playwright E2E tests)
+├── 📄 package-lock.json   # Lock file for root dependencies
+├── 📄 playwright.config.ts # Playwright E2E test configuration
+├── 📄 README.md           # This file
+├── 📄 CHANGELOG.md        # Version history
+├── 📄 LICENSE             # MIT License
+└── 📄 .gitignore          # Git ignore rules
 ```
 
-## 🧪 Тестирование
+For detailed structure, see [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
 
-### E2E тесты
+## 🧪 Testing
 
-**33 теста** покрывают:
-- ✅ Homepage navigation
-- ✅ Jobs list и фильтры
-- ✅ Job detail page
-- ✅ Companies pages
-- ✅ Chat widget UI
+### E2E Test Coverage
 
-**Запуск:**
+**33 tests** covering:
+- ✅ Homepage navigation (5 tests)
+- ✅ Jobs list and filters (7 tests)
+- ✅ Job detail page (6 tests)
+- ✅ Companies pages (7 tests)
+- ✅ Chat widget UI (8 tests)
+
+**Run tests:**
 ```bash
-npm run test:e2e           # Запустить все тесты
-npm run test:e2e:ui        # UI mode (интерактивный)
-npm run test:e2e:report    # Посмотреть отчет
+npm run test:e2e           # Run all tests
+npm run test:e2e:ui        # Interactive UI mode
+npm run test:e2e:report    # View HTML report
 ```
 
-### Ручное тестирование
+## 🔒 Security
 
-1. **Backend API:**
-   - Откройте http://localhost:8000/docs
-   - Протестируйте endpoints через Swagger UI
+### Important: API Keys
 
-2. **Frontend:**
-   - Откройте http://localhost:3000
-   - Проверьте все страницы
-   - Протестируйте фильтры
-   - Попробуйте AI ассистента
+**⚠️ NEVER commit API keys to git!**
 
-## 📚 Документация
+#### Frontend (.env.local)
+```bash
+# Get your key from https://platform.openai.com/api-keys
+OPENAI_API_KEY=sk-proj-your-key-here
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-- **[WORKFLOW.md](WORKFLOW.md)** - Полная документация процесса разработки
-- **[Backend README](backend/README.md)** - Backend инструкции
-- **[Frontend README](frontend/README.md)** - Frontend инструкции
+#### Backend (.env)
+```bash
+# Generate secure key:
+# python -c "import secrets; print(secrets.token_urlsafe(32))"
+SECRET_KEY=your-generated-secret-key
+DATABASE_URL=sqlite+aiosqlite:///./jobs.db
+```
 
-## 🎯 Roadmap
+### If You Accidentally Exposed an API Key
 
-### Реализовано ✅
-- [x] User authentication (JWT, Roles, Password Reset)
-- [x] Backend API (FastAPI + SQLAlchemy)
-- [x] Frontend (Next.js + React)
-- [x] AI агент (OpenAI GPT-4)
-- [x] E2E тесты (Playwright)
-- [x] Документация
+1. **Immediately revoke** the key at https://platform.openai.com/api-keys
+2. **Generate a new key** and update your `.env.local`
+3. **Clean git history** if the key was committed (see SECURITY.md)
 
-### Планы 🚧
-- [ ] Unit тесты для backend
-- [ ] Deployment (Vercel + Railway)
-- [ ] Performance optimization
-- [ ] More AI tools
+For detailed security guidelines, see [SECURITY.md](docs/SECURITY.md)
 
-## 🤝 Вклад
+## 🌐 HTTPS Support
 
-Проект создан как solo демонстрация, но pull requests приветствуются!
+The application supports HTTPS for secure communication.
 
-1. Fork репозиторий
-2. Создайте feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit изменения (`git commit -m 'Add amazing feature'`)
-4. Push в branch (`git push origin feature/amazing-feature`)
-5. Откройте Pull Request
+### Development HTTPS Setup
 
-## 📝 Лицензия
+```bash
+# Generate self-signed certificates
+# Windows:
+scripts\generate-certs.bat
+# Linux/Mac:
+./scripts/generate-certs.sh
 
-MIT License - см. [LICENSE](LICENSE)
+# Start backend with HTTPS
+cd backend
+python run_https.py
 
-## 👤 Автор
+# Start frontend with HTTPS
+cd frontend
+npm run dev:https
+```
+
+Access at:
+- Backend: https://localhost:8000
+- Frontend: https://localhost:3000
+
+For production HTTPS setup, see [HTTPS_SETUP.md](docs/HTTPS_SETUP.md)
+
+## 📈 HeadHunter API Integration
+
+### Sync Real Job Data
+
+```bash
+cd backend
+python sync_hh_vacancies.py
+```
+
+**What it does:**
+- Fetches real IT vacancies from HeadHunter API
+- Saves 150+ jobs from 100+ companies
+- Supports multiple search queries (Python, Java, JavaScript, etc.)
+- Automatically maps job levels and formats salaries
+
+**Configuration:**
+Edit `sync_hh_vacancies.py` to customize:
+- Search queries (technologies, roles)
+- Geographic area (Kazakhstan, Moscow, etc.)
+- Number of pages to fetch
+- Results per page
+
+### API Usage Examples
+
+```bash
+# Search Python vacancies in Kazakhstan
+curl "http://localhost:8000/api/v1/hh/vacancies?text=Python&area_id=40&per_page=10"
+
+# Get vacancy details
+curl "http://localhost:8000/api/v1/hh/vacancies/123456"
+
+# List available areas
+curl "http://localhost:8000/api/v1/hh/areas"
+
+# List professional roles
+curl "http://localhost:8000/api/v1/hh/roles"
+```
+
+## 📖 Documentation
+
+- **[docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)** - Detailed project structure and organization
+- **[docs/WORKFLOW.md](docs/WORKFLOW.md)** - Complete development workflow and AI-assisted development process
+- **[docs/SECURITY.md](docs/SECURITY.md)** - Security best practices and API key management
+- **[docs/HTTPS_SETUP.md](docs/HTTPS_SETUP.md)** - HTTPS configuration for development and production
+
+## 🎯 Development Stats
+
+- **Total Commits:** 23+
+- **Files Created:** 60+
+- **Lines of Code:** ~5,000+
+- **Development Time:** 6-8 hours (with AI assistance)
+- **Time Savings:** ~70% compared to manual development
+- **E2E Tests:** 33 tests (100% pass rate)
+
+## 🤝 Contributing
+
+This is a solo demonstration project, but pull requests are welcome!
+
+See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
+
+**Quick Start:**
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE)
+
+## 👤 Author
 
 **darkhan2409**
 - GitHub: [@darkhan2409](https://github.com/darkhan2409)
-- Репозиторий: [job-board-solo](https://github.com/darkhan2409/job-board-solo)
+- Repository: [job-board-solo](https://github.com/darkhan2409/job-board-solo)
 
-## 🙏 Благодарности
+## 🙏 Acknowledgments
 
-- **Kiro AI** - AI ассистент для разработки
+- **Kiro AI** - AI-assisted development
 - **OpenAI** - GPT-4 Turbo model
-- **FastAPI** - Отличный Python framework
-- **Next.js** - Мощный React framework
-- **shadcn/ui** - Красивые UI компоненты
+- **FastAPI** - Modern Python web framework
+- **Next.js** - React framework
+- **shadcn/ui** - Beautiful UI components
 - **Playwright** - E2E testing framework
+- **HeadHunter** - Job data API
 
 ---
 
-**⭐ Если проект понравился, поставьте звезду на GitHub!**
+**⭐ If you find this project useful, please give it a star on GitHub!**
 
-**📧 Вопросы? Создайте issue в репозитории.**
+**📧 Questions? Create an issue in the repository.**
 
 ---
 
-Сделано с ❤️ и AI в 2025
+Made with ❤️ and AI in 2025

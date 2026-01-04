@@ -15,7 +15,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.models.user import User, UserRole
 from app.models.refresh_token import RefreshToken
-from app.utils.security import create_access_token, create_refresh_token, hash_token
+from app.models.oauth_state import OAuthState
+from app.utils.security import create_access_token, create_refresh_token, hash_token, generate_random_token
 from app.utils.exceptions import ValidationException
 from datetime import datetime, timedelta
 
@@ -35,6 +36,81 @@ GITHUB_CONFIG = {
     "userinfo_url": "https://api.github.com/user",
     "scopes": ["user:email"],
 }
+
+
+async def create_oauth_state(db: AsyncSession, provider: str) -> str:
+    """
+    Create and store OAuth state token for CSRF protection.
+
+    Args:
+        db: Database session
+        provider: OAuth provider ('google' or 'github')
+
+    Returns:
+        State token string
+
+    Raises:
+        ValidationException: If provider is invalid
+    """
+    if provider not in ['google', 'github']:
+        raise ValidationException(f"Invalid OAuth provider: {provider}")
+
+    # Generate random state token
+    state = generate_random_token()
+    expires_at = datetime.utcnow() + timedelta(minutes=settings.OAUTH_STATE_EXPIRE_MINUTES)
+
+    # Store in database
+    oauth_state = OAuthState(
+        state=state,
+        provider=provider,
+        expires_at=expires_at,
+    )
+
+    db.add(oauth_state)
+    await db.commit()
+
+    logger.info(f"Created OAuth state token for {provider}")
+
+    return state
+
+
+async def validate_oauth_state(db: AsyncSession, state: str, provider: str) -> None:
+    """
+    Validate OAuth state token for CSRF protection.
+
+    Args:
+        db: Database session
+        state: State token from OAuth callback
+        provider: OAuth provider ('google' or 'github')
+
+    Raises:
+        ValidationException: If state is invalid, expired, or already used
+    """
+    if not state:
+        raise ValidationException("Missing state parameter")
+
+    # Find state token
+    stmt = select(OAuthState).where(
+        OAuthState.state == state,
+        OAuthState.provider == provider,
+    )
+    result = await db.execute(stmt)
+    oauth_state = result.scalar_one_or_none()
+
+    if not oauth_state:
+        raise ValidationException("Invalid state parameter - possible CSRF attack")
+
+    if oauth_state.used:
+        raise ValidationException("State token already used - possible replay attack")
+
+    if oauth_state.expires_at < datetime.utcnow():
+        raise ValidationException("State token expired")
+
+    # Mark as used
+    oauth_state.used = True
+    await db.commit()
+
+    logger.info(f"Validated OAuth state token for {provider}")
 
 
 def get_google_auth_url(state: str) -> str:
@@ -103,8 +179,11 @@ async def handle_google_callback(
         Tuple of (access_token, refresh_token, user)
 
     Raises:
-        ValidationException: If OAuth flow fails
+        ValidationException: If OAuth flow fails or state validation fails
     """
+    # Validate state token for CSRF protection
+    await validate_oauth_state(db=db, state=state, provider='google')
+
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         raise ValidationException("Google OAuth not configured")
 
@@ -180,8 +259,11 @@ async def handle_github_callback(
         Tuple of (access_token, refresh_token, user)
 
     Raises:
-        ValidationException: If OAuth flow fails
+        ValidationException: If OAuth flow fails or state validation fails
     """
+    # Validate state token for CSRF protection
+    await validate_oauth_state(db=db, state=state, provider='github')
+
     if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
         raise ValidationException("GitHub OAuth not configured")
 

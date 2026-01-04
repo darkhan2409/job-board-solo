@@ -20,6 +20,13 @@ build/
 .env
 .env.local
 
+# SSL Certificates (never commit private keys!)
+certs/
+*.pem
+*.key
+*.crt
+*.csr
+
 # IDE
 .vscode/
 .idea/

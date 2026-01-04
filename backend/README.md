@@ -33,6 +33,24 @@ cp .env.example .env
 # Edit .env with your settings
 ```
 
+**IMPORTANT: Generate secure secret keys!**
+
+```bash
+# Generate SECRET_KEY
+python -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))"
+
+# Generate JWT_SECRET_KEY
+python -c "import secrets; print('JWT_SECRET_KEY=' + secrets.token_urlsafe(32))"
+```
+
+Add the generated keys to your `.env` file. See [SECURITY_KEYS.md](SECURITY_KEYS.md) for details.
+
+**Validate your configuration:**
+
+```bash
+python validate_secrets.py
+```
+
 ### 4. Run the server
 
 ```bash
@@ -69,10 +87,54 @@ backend/
 │   ├── routes/              # API endpoints
 │   ├── services/            # Business logic
 │   └── utils/               # Utilities and exceptions
+├── tests/                   # Test suite
+│   ├── test_cors_configuration.py
+│   ├── test_email_verification.py
+│   ├── test_oauth_csrf.py
+│   ├── test_rate_limiting.py
+│   └── test_security_fix.py
+├── alembic/                 # Database migrations
 ├── requirements.txt
+├── package.json             # NPM scripts for convenience
+├── pytest.ini               # Pytest configuration
 ├── .env.example
 └── README.md
 ```
+
+## Running the Server
+
+### Using NPM scripts (recommended)
+```bash
+npm run dev      # Development server with auto-reload
+npm run start    # Production server
+npm test         # Run tests
+```
+
+### Using Python directly
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+## Testing
+
+Run all tests:
+```bash
+npm test
+# or
+pytest tests/
+```
+
+Run tests with verbose output:
+```bash
+npm run test:verbose
+```
+
+Run tests with coverage:
+```bash
+npm run test:coverage
+```
+
+See [tests/README.md](tests/README.md) for more details.
 
 ## API Endpoints (Coming Soon)
 

@@ -18,6 +18,14 @@ import { getAuthHeaders, getRefreshToken } from './auth'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+/**
+ * Default fetch options for CORS support
+ * Includes credentials to allow cookies and auth headers
+ */
+const defaultFetchOptions: RequestInit = {
+  credentials: 'include', // Include cookies and auth headers for CORS
+}
+
 export async function fetchJobs(filters?: JobFilters): Promise<Job[]> {
   const params = new URLSearchParams()
   
@@ -30,6 +38,7 @@ export async function fetchJobs(filters?: JobFilters): Promise<Job[]> {
   const url = `${API_URL}/api/jobs${params.toString() ? `?${params.toString()}` : ''}`
   
   const res = await fetch(url, {
+    ...defaultFetchOptions,
     cache: 'no-store',
   })
   
@@ -42,6 +51,7 @@ export async function fetchJobs(filters?: JobFilters): Promise<Job[]> {
 
 export async function fetchJobById(id: number): Promise<Job> {
   const res = await fetch(`${API_URL}/api/jobs/${id}`, {
+    ...defaultFetchOptions,
     cache: 'no-store',
   })
   
@@ -57,6 +67,7 @@ export async function fetchJobById(id: number): Promise<Job> {
 
 export async function fetchCompanies(): Promise<Company[]> {
   const res = await fetch(`${API_URL}/api/companies`, {
+    ...defaultFetchOptions,
     cache: 'no-store',
   })
   
@@ -69,6 +80,7 @@ export async function fetchCompanies(): Promise<Company[]> {
 
 export async function fetchCompanyById(id: number): Promise<CompanyWithJobs> {
   const res = await fetch(`${API_URL}/api/companies/${id}`, {
+    ...defaultFetchOptions,
     cache: 'no-store',
   })
 
@@ -86,6 +98,7 @@ export async function fetchCompanyById(id: number): Promise<CompanyWithJobs> {
 
 export async function loginUser(data: LoginRequest): Promise<TokenResponse> {
   const res = await fetch(`${API_URL}/api/auth/login`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -103,6 +116,7 @@ export async function loginUser(data: LoginRequest): Promise<TokenResponse> {
 
 export async function registerUser(data: RegisterRequest): Promise<User> {
   const res = await fetch(`${API_URL}/api/auth/register`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -120,6 +134,7 @@ export async function registerUser(data: RegisterRequest): Promise<User> {
 
 export async function logoutUser(refreshToken: string): Promise<void> {
   const res = await fetch(`${API_URL}/api/auth/logout`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -135,6 +150,7 @@ export async function logoutUser(refreshToken: string): Promise<void> {
 
 export async function refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
   const res = await fetch(`${API_URL}/api/auth/refresh`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -153,6 +169,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenRes
 
 export async function getOAuthUrl(provider: 'google' | 'github'): Promise<OAuthUrlResponse> {
   const res = await fetch(`${API_URL}/api/auth/${provider}`, {
+    ...defaultFetchOptions,
     method: 'GET',
   })
 
@@ -169,6 +186,7 @@ export async function handleOAuthCallback(
   state: string
 ): Promise<TokenResponse> {
   const res = await fetch(`${API_URL}/api/auth/${provider}/callback`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -188,6 +206,7 @@ export async function handleOAuthCallback(
 
 export async function requestPasswordReset(email: string): Promise<void> {
   const res = await fetch(`${API_URL}/api/auth/request-password-reset`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -204,6 +223,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
 
 export async function resetPassword(token: string, newPassword: string): Promise<User> {
   const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -223,6 +243,7 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
 export async function getSavedJobs(): Promise<SavedJob[]> {
   const res = await fetch(`${API_URL}/api/saved-jobs`, {
+    ...defaultFetchOptions,
     headers: getAuthHeaders(),
     cache: 'no-store',
   })
@@ -236,6 +257,7 @@ export async function getSavedJobs(): Promise<SavedJob[]> {
 
 export async function checkJobSaved(jobId: number): Promise<boolean> {
   const res = await fetch(`${API_URL}/api/saved-jobs/${jobId}/check`, {
+    ...defaultFetchOptions,
     headers: getAuthHeaders(),
     cache: 'no-store',
   })
@@ -250,6 +272,7 @@ export async function checkJobSaved(jobId: number): Promise<boolean> {
 
 export async function saveJob(jobId: number): Promise<SavedJob> {
   const res = await fetch(`${API_URL}/api/saved-jobs`, {
+    ...defaultFetchOptions,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -271,6 +294,7 @@ export async function saveJob(jobId: number): Promise<SavedJob> {
 
 export async function unsaveJob(jobId: number): Promise<void> {
   const res = await fetch(`${API_URL}/api/saved-jobs/${jobId}`, {
+    ...defaultFetchOptions,
     method: 'DELETE',
     headers: getAuthHeaders(),
   })
